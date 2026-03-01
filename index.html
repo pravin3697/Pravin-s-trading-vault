@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pravin's trading journal</title>
+    <!-- High-quality Blue Upward Arrow / Bull Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232962ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='23 6 13.5 15.5 8.5 10.5 1 18'></polyline><polyline points='17 6 23 6 23 12'></polyline></svg>">
+    <style>
+        /* TradingView Inspired Dark Theme */
+        :root {
+            --bg-color: #0b0e14;
+            --panel-bg: #131722;
+            --card-bg: #1e222d;
+            --text-main: #d1d4dc;
+            --text-muted: #787b86;
+            --border-color: #2a2e39;
+            --accent-blue: #2962ff;
+            --accent-blue-hover: #1e53e5;
+            --profit-green: #089981;
+            --loss-red: #f23645;
+            --warning-yellow: #eeb422;
+            --ai-purple: #9333ea;
+            --ai-purple-hover: #a855f7;
+            --hover-bg: #2a2e39;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            line-height: 1.6;
+            overflow-y: scroll; /* Lock scrollbar to prevent page shifting */
+        }
+
+        /* 1. Master Sticky Navigation (Only Title & Top Actions) */
+        .sticky-nav {
+            position: sticky; 
+            top: 0; 
+            height: 72px; /* Fixed height so table headers know exactly where to dock */
+            background-color: var(--bg-color); /* Solid background hides scrolling rows */
+            z-index: 100; /* Stays above everything */
+            border-bottom: 1px solid var(--border-color); 
+            display: flex;
+            align-items: center;
+        }
+
+        .header-container { 
+            display: flex; justify-content: space-between; align-items: center; 
+            width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 20px; 
+        }
+
+        /* Interactive Brand/Logo */
+        .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; transition: opacity 0.2s; }
+        .brand:hover { opacity: 0.8; }
+        h1 { font-size: 24px; font-weight: 600; letter-spacing: 0.5px; margin: 0; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px 40px 20px; }
+
+        .btn {
+            background-color: var(--accent-blue); color: white; border: none;
+            padding: 8px 16px; border-radius: 4px; cursor: pointer;
+            font-size: 14px; font-weight: 500; transition: all 0.2s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn:hover { background-color: var(--accent-blue-hover); }
+        
+        .btn-secondary { background-color: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-secondary:hover { background-color: var(--hover-bg); border-color: var(--text-muted); }
+        
+        .btn-danger-solid { background-color: var(--loss-red); color: white; border: none; }
+        .btn-danger-solid:hover { background-color: #d92b3a; }
+
+        .icon-btn {
+            background: transparent; border: 1px solid var(--border-color); color: var(--text-muted);
+            padding: 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .icon-btn:hover { color: var(--text-main); border-color: var(--text-main); background: var(--hover-bg); }
+
+        /* Icon-Only Buttons for Table Rows (Blended into background) */
+        .btn-icon-only {
+            width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 4px; cursor: pointer; transition: all 0.2s ease;
+            background-color: var(--panel-bg); /* Blends with table */
+            border: 1px solid var(--border-color); /* Blends with table */
+            color: var(--text-muted); /* Blends with text */
+        }
+
+        /* Hover states for Table Icons */
+        .btn-ai:hover { background-color: var(--ai-purple); border-color: var(--ai-purple); color: white; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(147, 51, 234, 0.3); }
+        .btn-edit:hover { background-color: var(--warning-yellow); border-color: var(--warning-yellow); color: #000; }
+        .btn-danger:hover { background-color: var(--loss-red); border-color: var(--loss-red); color: white; }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex; gap: 24px; margin-bottom: 20px; padding: 16px;
+            background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 6px; flex-wrap: wrap;
+        }
+        .stat-item { display: flex; flex-direction: column; }
+        .stat-label { font-size: 12px; color: var(--text-muted); }
+        .stat-value { font-size: 18px; font-weight: 600; }
+
+        /* Tabs & Views Wrapper */
+        .tabs { display: flex; gap: 16px; margin-bottom: 16px; }
+        .tab { 
+            padding: 8px 16px; cursor: pointer; border-radius: 4px; font-weight: 500; 
+            color: var(--text-muted); transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px; /* For glassy SVG icons */
+        }
+        .tab.active { background-color: var(--panel-bg); color: var(--text-main); border: 1px solid var(--border-color); }
+
+        .views-wrapper { display: grid; position: relative; }
+        .view-container { grid-area: 1 / 1; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .view-container.active { opacity: 1; visibility: visible; pointer-events: auto; z-index: 1; }
+
+        /* Sub-filters */
+        .sub-filters { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+        .filter-btn:hover { border-color: var(--text-main); color: var(--text-main); }
+        .filter-btn.active { background: var(--accent-blue); border-color: var(--accent-blue); color: white; }
+
+        /* 2. Scrollable Table & Sticky Column Headers */
+        .table-wrapper { 
+            background-color: var(--panel-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        
+        th, td { 
+            padding: 12px 16px; text-align: left; 
+            border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); 
+            vertical-align: middle; 
+        }
+        
+        th { 
+            position: sticky; 
+            top: 72px; /* Locks EXACTLY beneath the main sticky header */
+            background-color: var(--card-bg); /* Solid background hides rows underneath */
+            z-index: 50; 
+            color: var(--text-muted); font-weight: 600; white-space: nowrap; 
+            /* Replace normal borders with box-shadows so they don't break when scrolling */
+            border-bottom: none; border-right: none;
+            box-shadow: inset 0 -1px 0 var(--border-color), inset -1px 0 0 var(--border-color);
+        }
+        th:last-child { box-shadow: inset 0 -1px 0 var(--border-color); }
+        tr:hover { background-color: var(--hover-bg); }
+        tr:last-child td { border-bottom: none; }
+        td:last-child { border-right: none; }
+
+        .profit { color: var(--profit-green); font-weight: 600; }
+        .loss { color: var(--loss-red); font-weight: 600; }
+        .tag { padding: 2px 8px; border-radius: 12px; font-size: 12px; background: var(--card-bg); border: 1px solid var(--border-color); white-space: nowrap; }
+        .tag.long { border-color: var(--profit-green); color: var(--profit-green); }
+        .tag.short { border-color: var(--loss-red); color: var(--loss-red); }
+        .tag.neutral { border-color: var(--text-muted); color: var(--text-muted); }
+        .action-btns { display: flex; gap: 6px; flex-wrap: nowrap; }
+
+        .thumb-link { display: block; width: 48px; height: 32px; cursor: pointer; }
+        .thumb-img { width: 48px; height: 32px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color); transition: all 0.2s; }
+        .thumb-img:hover { border-color: var(--accent-blue); transform: scale(1.1); }
+
+        /* Pattern Vault Cards */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .card { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-4px); border-color: var(--text-muted); }
+        .card-img-link { display: block; width: 100%; height: 200px; cursor: pointer; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; border-bottom: 1px solid var(--border-color); background-color: #000; }
+        .card-content { padding: 16px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .card-title { font-size: 16px; font-weight: 600; }
+        .card-details { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+
+        /* Floating AI Mentor Chat UI */
+        .chat-toggle-btn {
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+            border-radius: 50%; background-color: #2a2e39; color: #ffffff; 
+            border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            cursor: pointer; z-index: 999; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;
+        }
+        .chat-toggle-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7); background-color: var(--accent-blue); border-color: var(--accent-blue); }
+
+        .chat-window {
+            position: fixed; bottom: 100px; right: 30px; width: 380px; height: 550px;
+            background-color: var(--panel-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); display: flex; flex-direction: column; z-index: 1000;
+            opacity: 0; visibility: hidden; transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .chat-window.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+
+        .chat-header {
+            padding: 16px; background-color: var(--card-bg); border-bottom: 1px solid var(--border-color);
+            border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-header h3 { font-size: 15px; margin: 0; display: flex; align-items: center; gap: 8px; }
+
+        .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+        .chat-body::-webkit-scrollbar { width: 6px; }
+        .chat-body::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+
+        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; word-wrap: break-word; }
+        .user-msg { align-self: flex-end; background-color: var(--accent-blue); color: white; border-bottom-right-radius: 2px; }
+        .ai-msg { align-self: flex-start; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom-left-radius: 2px; color: var(--text-main); }
+        
+        .chat-input-area { padding: 12px; background-color: var(--card-bg); border-top: 1px solid var(--border-color); border-radius: 0 0 12px 12px; display: flex; gap: 8px; align-items: center;}
+        
+        /* Defeating the Password Manager with a Textarea */
+        .chat-input-area textarea { 
+            flex: 1; background: var(--bg-color); border: 1px solid var(--border-color); 
+            padding: 10px 14px; border-radius: 20px; color: var(--text-main); 
+            font-family: var(--font-family); outline: none; resize: none; overflow: hidden;
+            line-height: 20px; height: 42px; box-sizing: border-box;
+        }
+        .chat-input-area textarea:focus { border-color: var(--accent-blue); }
+
+        .chat-send-btn {
+            background-color: var(--accent-blue); color: white; border: none; border-radius: 20px;
+            padding: 0 16px; height: 40px; cursor: pointer; font-weight: 500; transition: background 0.2s;
+        }
+        .chat-send-btn:hover { background-color: var(--accent-blue-hover); }
+
+        .loading-pulse { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+        .loading-pulse span { width: 6px; height: 6px; background-color: var(--accent-blue); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .loading-pulse span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-pulse span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        /* Modals & Lightbox */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); z-index: 3000; justify-content: center; align-items: center; }
+        .modal { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; width: 100%; max-width: 500px; padding: 24px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+        .close-btn:hover { color: var(--text-main); }
+        .form-group { margin-bottom: 16px; }
+        .form-row { display: flex; gap: 16px; }
+        .form-row .form-group { flex: 1; }
+        label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-muted); }
+        input, select, textarea { width: 100%; padding: 10px; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 4px; font-family: var(--font-family); }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-blue); }
+        .checkbox-label { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-size: 14px; user-select: none; padding: 8px; background: var(--hover-bg); border-radius: 4px; border: 1px solid var(--border-color); }
+        .checkbox-label input { width: 16px; height: 16px; accent-color: var(--accent-blue); cursor: pointer; }
+        .empty-state { text-align: center; padding: 40px; color: var(--text-muted); grid-column: 1 / -1; }
+
+        .lightbox { display: none; position: fixed; z-index: 4000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+        .lightbox.show { display: flex; opacity: 1; }
+        .lightbox-img { max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); object-fit: contain; }
+        .lightbox-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; user-select: none; }
+        .lightbox-close:hover { color: var(--loss-red); }
+    </style>
+</head>
+<body>
+
+    <!-- Main Title Header - ALWAYS STICKY -->
+    <header class="sticky-nav">
+        <div class="header-container">
+            <!-- Clicking brand scrolls to top -->
+            <div class="brand" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to top">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--profit-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                <h1>Pravin's trading Vault</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="exportBtn" title="Download backup file">Export</button>
+                <button class="btn btn-secondary" id="importBtn" title="Restore from backup file">Import</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+                
+                <button class="icon-btn" id="openSettingsBtn" title="Settings & Data">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+                <button class="btn" id="openModalBtn">Log Trade / Setup</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content - STATS AND FILTERS SCROLL UP NATURALLY -->
+    <div class="container" style="margin-top: 24px;">
+        <div class="stats-bar">
+            <div class="stat-item"><span class="stat-label">Total Executed Trades</span><span class="stat-value" id="stat-total-trades">0</span></div>
+            <div class="stat-item"><span class="stat-label">Net P&L (Executed)</span><span class="stat-value" id="stat-net-pnl">₹0.00</span></div>
+            <div class="stat-item"><span class="stat-label">Win Rate (Executed)</span><span class="stat-value" id="stat-win-rate">0%</span></div>
+        </div>
+
+        <div class="tabs">
+            <!-- Glassy SVG Icons for Tabs -->
+            <div class="tab active" data-target="tableView">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                Data Table
+            </div>
+            <div class="tab" data-target="galleryView">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Pattern Vault
+            </div>
+        </div>
+
+        <!-- Views Wrapper maintains smooth transition without jump -->
+        <div class="views-wrapper">
+            <!-- Data Table View -->
+            <div id="tableView" class="view-container active">
+                <div class="sub-filters" id="tableFilters">
+                    <button class="filter-btn active" data-filter="All">All Logs</button>
+                    <button class="filter-btn" data-filter="Executed">Executed Trades</button>
+                    <button class="filter-btn" data-filter="Setups">Tracked Setups</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <!-- Columns stick exactly under the main title header -->
+                        <thead><tr><th>Date</th><th>Asset</th><th>Chart</th><th>Setup</th><th>Dir</th><th>Qty</th><th>Entry</th><th>Exit</th><th>P&L</th><th>Actions</th></tr></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pattern Vault -->
+            <div id="galleryView" class="view-container">
+                <div class="sub-filters" id="vaultFilters">
+                    <button class="filter-btn active" data-filter="All">All Patterns</button>
+                    <button class="filter-btn" data-filter="Head and Shoulders">Head and Shoulders</button>
+                    <button class="filter-btn" data-filter="Double Top">Double Top</button>
+                    <button class="filter-btn" data-filter="Double Bottom">Double Bottom</button>
+                    <button class="filter-btn" data-filter="Breakout & Retest">Breakout & Retest</button>
+                    <button class="filter-btn" data-filter="Other">Other</button>
+                </div>
+                <div class="gallery-grid" id="galleryGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Chat Button -->
+    <button class="chat-toggle-btn" id="chatToggleBtn" title="Open AI Mentor">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
+        </svg>
+    </button>
+
+    <!-- Chat Window -->
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <h3>✨ AI Trading Partner</h3>
+            <button class="close-btn" id="closeChatBtn" style="font-size: 20px;">&times;</button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-msg ai-msg">Hey Pravin! 👋 I'm Gemini, your expert trading partner. Let's analyze your setups and crush the markets together. What are we looking at today? 🚀</div>
+        </div>
+        <div class="chat-input-area">
+            <!-- Textarea completely defeats password manager popups -->
+            <textarea id="chat-message-input" rows="1" spellcheck="false" autocomplete="new-password" data-lpignore="true" placeholder="Ask a question..."></textarea>
+            <button class="chat-send-btn" id="sendChatBtn">Send</button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" id="lightboxClose">&times;</span>
+        <img src="" alt="Chart" class="lightbox-img" id="lightboxImg">
+    </div>
+
+    <!-- Log Trade Form -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header"><h2 id="modalTitle">Log a Trade</h2><button class="close-btn" id="closeModalBtn">&times;</button></div>
+            <form id="tradeForm">
+                <div class="form-row">
+                    <div class="form-group"><label>Date</label><input type="date" id="tradeDate" required></div>
+                    <div class="form-group"><label>Asset / Pair</label><input type="text" id="tradeAsset" placeholder="e.g. BTC/INR or RELIANCE" required></div>
+                </div>
+                <div class="form-group">
+                    <label>Setup / Pattern</label>
+                    <select id="tradeSetup" required>
+                        <option value="Head and Shoulders">Head and Shoulders</option>
+                        <option value="Double Top">Double Top</option>
+                        <option value="Double Bottom">Double Bottom</option>
+                        <option value="Breakout & Retest">Breakout & Retest</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group"><label class="checkbox-label"><input type="checkbox" id="isSetupOnly"> Log as "Setup Only" (No execution)</label></div>
+                
+                <!-- Trade Execution Fields -->
+                <div id="tradeExecutionFields">
+                    <div class="form-row">
+                        <div class="form-group"><label>Direction</label><select id="tradeDirection"><option value="Long">Long</option><option value="Short">Short</option></select></div>
+                        <div class="form-group"><label>Quantity</label><input type="number" step="any" id="tradeQty" placeholder="e.g. 50"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Entry Price</label><input type="number" step="any" id="tradeEntry" placeholder="0.00"></div>
+                        <div class="form-group"><label>Exit Price</label><input type="number" step="any" id="tradeExit" placeholder="0.00"></div>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: -6px; margin-bottom: 12px;">P&L is automatically calculated.</p>
+                </div>
+
+                <div class="form-group"><label>TradingView Image URL</label><input type="url" id="tradeImage" placeholder="https://..."></div>
+                <div class="form-group"><label>Notes / Lessons</label><textarea id="tradeNotes" rows="2"></textarea></div>
+                <button type="submit" class="btn" id="saveBtn" style="width: 100%; padding: 12px; font-size: 16px;">Save to Journal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings & Data Modal -->
+    <div class="modal-overlay" id="settingsModalOverlay">
+        <div class="modal">
+            <div class="modal-header"><h2>⚙️ Settings & Data</h2><button class="close-btn" id="closeSettingsBtn">&times;</button></div>
+            <div class="form-group">
+                <label>Gemini API Key</label>
+                <!-- autocomplete off to prevent autofill issues -->
+                <input type="password" id="apiKeyInput" placeholder="AIzaSy..." autocomplete="new-password" data-lpignore="true">
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">Required for AI Mentor. Stored locally in your browser.</p>
+            </div>
+            <button class="btn" id="saveSettingsBtn" style="width: 100%; margin-bottom: 16px;">Save Key</button>
+            
+            <hr style="border: none; border-top: 1px solid var(--border-color); margin-bottom: 16px;">
+            
+            <div class="form-group">
+                <label>Danger Zone</label>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Clear all stored data to reset the journal completely.</p>
+                <button class="btn btn-danger-solid" id="clearDataBtn" style="width: 100%;">Clear All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data State with localized Indian Rupee (₹) automated calculations
+        const dummyTrades =[
+            { id: 1, date: '2026-03-01', asset: 'NIFTY50', isSetupOnly: false, direction: 'Long', setup: 'Double Bottom', qty: 50, entry: 22500, exit: 22650, pnl: 7500.00, image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=800', notes: 'Perfect double bottom off support.' },
+            { id: 2, date: '2026-03-02', asset: 'RELIANCE', isSetupOnly: false, direction: 'Short', setup: 'Double Top', qty: 100, entry: 2950.50, exit: 2910.20, pnl: 4030.00, image: 'https://images.unsplash.com/photo-1642790106117-e829e14a795f?auto=format&fit=crop&q=80&w=800', notes: 'Rejected at previous high.' },
+        ];
+
+        let trades = JSON.parse(localStorage.getItem('pravinTradingJournal')) || dummyTrades;
+        let chatHistory =[]; 
+        
+        let editingTradeId = null;
+        let currentVaultFilter = 'All';
+        let currentTableFilter = 'All'; 
+        const placeholderImg = 'https://via.placeholder.com/800x400/131722/787b86?text=No+Chart+Provided';
+
+        function init() {
+            renderUI();
+            toggleExecutionFields(); 
+            document.getElementById('apiKeyInput').value = localStorage.getItem('pravinGeminiApiKey') || '';
+        }
+
+        function renderUI() { renderTable(); renderGallery(); updateStats(); saveData(); }
+
+        // Localized format to Indian Rupee (₹)
+        const formatMoney = (amount) => {
+            if (amount === '' || amount == null || isNaN(amount)) return '';
+            return (parseFloat(amount) >= 0 ? '+₹' : '-₹') + Math.abs(parseFloat(amount)).toFixed(2);
+        };
+        const formatPrice = (price) => (price === '' || price == null || isNaN(price)) ? '-' : parseFloat(price).toString();
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            let filteredTrades = trades;
+            if (currentTableFilter === 'Executed') filteredTrades = trades.filter(t => !t.isSetupOnly);
+            else if (currentTableFilter === 'Setups') filteredTrades = trades.filter(t => t.isSetupOnly);
+
+            if (filteredTrades.length === 0) { tbody.innerHTML = `<tr><td colspan="10" class="empty-state">No logs found.</td></tr>`; return; }
+
+            const sortedTrades =[...filteredTrades].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            // Minimalist SVG Icons for Action Buttons
+            const aiIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path></svg>`;
+            const editIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+            const delIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+
+            sortedTrades.forEach(trade => {
+                const isSetup = trade.isSetupOnly;
+                const imgUrl = trade.image || placeholderImg;
+                const pnlDisplay = isSetup ? `<span class="tag neutral">Setup</span>` : `<span class="${trade.pnl >= 0 ? 'profit' : 'loss'}">${formatMoney(trade.pnl)}</span>`;
+                const dirDisplay = isSetup ? `<span class="tag neutral">-</span>` : `<span class="tag ${trade.direction?.toLowerCase() || ''}">${trade.direction}</span>`;
+                const qtyDisplay = isSetup ? '-' : (trade.qty || '-');
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${trade.date}</td><td style="font-weight: 600;">${trade.asset}</td>
+                    <td><div class="thumb-link" onclick="openLightbox('${imgUrl}')"><img src="${imgUrl}" class="thumb-img" onerror="this.src='${placeholderImg}'"></div></td>
+                    <td>${trade.setup}</td><td>${dirDisplay}</td><td>${qtyDisplay}</td>
+                    <td>${isSetup ? '-' : formatPrice(trade.entry)}</td><td>${isSetup ? '-' : formatPrice(trade.exit)}</td><td>${pnlDisplay}</td>
+                    <td class="action-btns">
+                        <button class="btn-icon-only btn-ai" onclick="analyzeRowData(${trade.id})" title="AI Analysis">${aiIcon}</button>
+                        <button class="btn-icon-only btn-edit" onclick="editTrade(${trade.id})" title="Edit Log">${editIcon}</button>
+                        <button class="btn-icon-only btn-danger" onclick="deleteTrade(${trade.id})" title="Delete Log">${delIcon}</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderGallery() {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = '';
+            const filteredTrades = currentVaultFilter === 'All' ? trades : trades.filter(t => t.setup === currentVaultFilter);
+            if (filteredTrades.length === 0) { grid.innerHTML = `<div class="empty-state">No patterns found.</div>`; return; }
+
+            const sortedTrades =[...filteredTrades].sort((a, b) => new Date(b.date) - new Date(a.date));
+            sortedTrades.forEach(trade => {
+                const isSetup = trade.isSetupOnly;
+                const imgUrl = trade.image || placeholderImg;
+                const pnlDisplay = isSetup ? `<span class="tag neutral">Setup Only</span>` : `<span class="${trade.pnl >= 0 ? 'profit' : 'loss'}">${formatMoney(trade.pnl)}</span>`;
+                const pricingDisplay = isSetup ? 'Observation only.' : `Entry: ${formatPrice(trade.entry)} | Exit: ${formatPrice(trade.exit)} | Qty: ${trade.qty || '-'}`;
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-img-link" onclick="openLightbox('${imgUrl}')"><img src="${imgUrl}" class="card-img" onerror="this.src='${placeholderImg}'"></div>
+                    <div class="card-content">
+                        <div class="card-header"><span class="card-title">${trade.asset}</span>${pnlDisplay}</div>
+                        <div class="card-details"><strong>${trade.date}</strong> ${isSetup ? '' : `&bull; <span class="tag ${trade.direction.toLowerCase()}">${trade.direction}</span>`} &bull; <strong>${trade.setup}</strong></div>
+                        <div class="card-details">${pricingDisplay}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateStats() {
+            const executedTrades = trades.filter(t => !t.isSetupOnly);
+            document.getElementById('stat-total-trades').textContent = executedTrades.length; 
+            const netPnl = executedTrades.reduce((sum, trade) => sum + parseFloat(trade.pnl || 0), 0);
+            const pnlEl = document.getElementById('stat-net-pnl');
+            pnlEl.textContent = formatMoney(netPnl);
+            pnlEl.className = 'stat-value ' + (netPnl >= 0 ? 'profit' : 'loss');
+            const wins = executedTrades.filter(t => parseFloat(t.pnl) > 0).length;
+            document.getElementById('stat-win-rate').textContent = executedTrades.length > 0 ? ((wins / executedTrades.length) * 100).toFixed(1) + '%' : '0%';
+        }
+
+        const isSetupOnlyCb = document.getElementById('isSetupOnly');
+        const tradeExecutionFields = document.getElementById('tradeExecutionFields');
+
+        function toggleExecutionFields() {
+            tradeExecutionFields.style.display = isSetupOnlyCb.checked ? 'none' : 'block';['tradeDirection', 'tradeEntry', 'tradeExit', 'tradeQty'].forEach(id => document.getElementById(id).required = !isSetupOnlyCb.checked);
+        }
+        isSetupOnlyCb.addEventListener('change', toggleExecutionFields);
+
+        // Auto P&L Math happening on form submit
+        document.getElementById('tradeForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const isSetup = isSetupOnlyCb.checked;
+            
+            let calcPnl = '';
+            let rawQty = document.getElementById('tradeQty').value;
+            let dir = document.getElementById('tradeDirection').value;
+            
+            if (!isSetup) {
+                let entry = parseFloat(document.getElementById('tradeEntry').value);
+                let exit = parseFloat(document.getElementById('tradeExit').value);
+                let qty = parseFloat(rawQty);
+                if (dir === 'Long') {
+                    calcPnl = (exit - entry) * qty;
+                } else {
+                    calcPnl = (entry - exit) * qty;
+                }
+            }
+
+            const tradeData = {
+                date: document.getElementById('tradeDate').value, 
+                asset: document.getElementById('tradeAsset').value.toUpperCase(),
+                setup: document.getElementById('tradeSetup').value, 
+                isSetupOnly: isSetup,
+                direction: isSetup ? '' : dir, 
+                qty: isSetup ? '' : rawQty,
+                entry: isSetup ? '' : document.getElementById('tradeEntry').value,
+                exit: isSetup ? '' : document.getElementById('tradeExit').value, 
+                pnl: calcPnl,
+                image: document.getElementById('tradeImage').value, 
+                notes: document.getElementById('tradeNotes').value
+            };
+
+            if (editingTradeId) {
+                const idx = trades.findIndex(t => t.id === editingTradeId);
+                trades[idx] = { ...trades[idx], ...tradeData };
+            } else { tradeData.id = Date.now(); trades.push(tradeData); }
+
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('tradeForm').reset(); editingTradeId = null; toggleExecutionFields(); renderUI();
+        });
+
+        window.editTrade = (id) => {
+            const t = trades.find(t => t.id === id); if (!t) return;
+            editingTradeId = id;
+            document.getElementById('tradeDate').value = t.date; document.getElementById('tradeAsset').value = t.asset;
+            document.getElementById('tradeSetup').value = t.setup; document.getElementById('isSetupOnly').checked = t.isSetupOnly || false;
+            document.getElementById('tradeDirection').value = t.direction || 'Long'; document.getElementById('tradeQty').value = t.qty || '';
+            document.getElementById('tradeEntry').value = t.entry || ''; document.getElementById('tradeExit').value = t.exit || '';
+            document.getElementById('tradeImage').value = t.image || ''; document.getElementById('tradeNotes').value = t.notes || '';
+            toggleExecutionFields(); 
+            document.getElementById('modalTitle').textContent = 'Edit Log'; document.getElementById('saveBtn').textContent = 'Update Journal';
+            document.getElementById('modalOverlay').style.display = 'flex';
+        };
+
+        window.deleteTrade = (id) => { if(confirm("Permanently delete this log?")) { trades = trades.filter(t => t.id !== id); renderUI(); } };
+        function saveData() { localStorage.setItem('pravinTradingJournal', JSON.stringify(trades)); }
+
+        // Settings, Export, Import, Data Clear, UI Routing
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            if(trades.length === 0) return alert("No data to export.");
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(trades, null, 2)], { type: "application/json" }));
+            a.download = 'trading_backup.json'; a.click();
+        });
+        document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+        document.getElementById('importFile').addEventListener('change', (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if (Array.isArray(data) && confirm("Overwrite current journal data?")) { trades = data; renderUI(); alert('Restored!'); }
+                } catch (err) { alert('Invalid backup file.'); }
+            };
+            reader.readAsText(file); e.target.value = '';
+        });
+
+        // Clear All Data Logic
+        document.getElementById('clearDataBtn').addEventListener('click', () => {
+            if(confirm("Are you absolutely sure? This will delete all your logged trades and reset the journal. This cannot be undone unless you have a backup exported!")) {
+                trades =[]; saveData(); renderUI();
+                document.getElementById('settingsModalOverlay').style.display = 'none';
+                alert("All data cleared. Ready for a fresh start!");
+            }
+        });
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab, .view-container').forEach(el => el.classList.remove('active'));
+                tab.classList.add('active'); document.getElementById(tab.dataset.target).classList.add('active');
+            });
+        });
+        document.querySelectorAll('#tableFilters .filter-btn').forEach(btn => btn.addEventListener('click', (e) => {
+            document.querySelectorAll('#tableFilters .filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active'); currentTableFilter = e.target.dataset.filter; renderTable(); 
+        }));
+        document.querySelectorAll('#vaultFilters .filter-btn').forEach(btn => btn.addEventListener('click', (e) => {
+            document.querySelectorAll('#vaultFilters .filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active'); currentVaultFilter = e.target.dataset.filter; renderGallery(); 
+        }));
+
+        const lightbox = document.getElementById('lightbox'), lightboxImg = document.getElementById('lightboxImg');
+        window.openLightbox = (url) => { lightboxImg.src = url; lightbox.classList.add('show'); };
+        const closeLb = () => { lightbox.classList.remove('show'); setTimeout(() => lightboxImg.src='', 200); };
+        document.getElementById('lightboxClose').addEventListener('click', closeLb);
+        lightbox.addEventListener('click', (e) => { if(e.target===lightbox) closeLb(); });
+
+        document.getElementById('openModalBtn').addEventListener('click', () => {
+            document.getElementById('tradeForm').reset(); editingTradeId = null; toggleExecutionFields();
+            document.getElementById('tradeDate').valueAsDate = new Date(); document.getElementById('modalTitle').textContent = 'Log Trade / Setup';
+            document.getElementById('saveBtn').textContent = 'Save to Journal'; document.getElementById('modalOverlay').style.display = 'flex';
+        });['modalOverlay', 'settingsModalOverlay'].forEach(id => {
+            document.getElementById(id).addEventListener('click', (e) => { if(e.target.id === id) e.target.style.display = 'none'; });
+        });
+        document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('modalOverlay').style.display='none');
+        document.getElementById('openSettingsBtn').addEventListener('click', () => document.getElementById('settingsModalOverlay').style.display = 'flex');
+        document.getElementById('closeSettingsBtn').addEventListener('click', () => document.getElementById('settingsModalOverlay').style.display = 'none');
+        document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+            localStorage.setItem('pravinGeminiApiKey', document.getElementById('apiKeyInput').value.trim());
+            document.getElementById('settingsModalOverlay').style.display = 'none'; alert("API Key Saved.");
+        });
+
+        // --- FLOATING AI MENTOR CHAT INTEGRATION ---
+        
+        const chatWindow = document.getElementById('chatWindow');
+        const chatBody = document.getElementById('chatBody');
+        const chatInput = document.getElementById('chat-message-input'); 
+        const chatToggleBtn = document.getElementById('chatToggleBtn');
+        
+        // Toggle Chat Visibility
+        chatToggleBtn.addEventListener('click', () => {
+            chatWindow.classList.toggle('show');
+            if(chatWindow.classList.contains('show')) chatInput.focus();
+        });
+        document.getElementById('closeChatBtn').addEventListener('click', () => chatWindow.classList.remove('show'));
+
+        // Click Outside to Close Logic
+        document.addEventListener('click', (e) => {
+            if (chatWindow.classList.contains('show')) {
+                if (!chatWindow.contains(e.target) && !chatToggleBtn.contains(e.target)) {
+                    chatWindow.classList.remove('show');
+                }
+            }
+        });
+
+        // Append message UI
+        function appendMessage(text, isUser) {
+            const div = document.createElement('div');
+            div.className = `chat-msg ${isUser ? 'user-msg' : 'ai-msg'}`;
+            div.innerText = text;
+            chatBody.appendChild(div);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Show/Hide typing pulse
+        function toggleTypingIndicator(show) {
+            if (show) {
+                const div = document.createElement('div');
+                div.className = 'chat-msg ai-msg loading-pulse'; div.id = 'aiTyping';
+                div.innerHTML = '<span></span><span></span><span></span>';
+                chatBody.appendChild(div); chatBody.scrollTop = chatBody.scrollHeight;
+            } else {
+                const el = document.getElementById('aiTyping');
+                if (el) el.remove();
+            }
+        }
+
+        // Send Message to Gemini
+        async function sendChatMessage(userText) {
+            if (!userText.trim()) return;
+            
+            const apiKey = localStorage.getItem('pravinGeminiApiKey');
+            if (!apiKey) {
+                alert("Please set your Gemini API Key in the Settings first.");
+                document.getElementById('settingsModalOverlay').style.display = 'flex';
+                return;
+            }
+
+            // Update UI & History
+            appendMessage(userText, true);
+            chatHistory.push({ role: "user", parts:[{ text: userText }] });
+            chatInput.value = '';
+            
+            toggleTypingIndicator(true);
+
+            // Dynamically inject latest LocalStorage trades with requested personality
+            const systemText = `You are Gemini, a supportive, conversational, and expert trading mentor for Pravin. Use his localStorage trade data to give friendly, specific advice. Avoid robotic phrases. Current trades: ${JSON.stringify(trades)}`;
+            
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+            const payload = {
+                system_instruction: { parts: [{ text: systemText }] },
+                contents: chatHistory
+            };
+
+            try {
+                const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const data = await response.json();
+                
+                toggleTypingIndicator(false);
+                
+                if (!response.ok) throw new Error(data.error?.message || "Failed to reach AI.");
+                
+                const aiText = data.candidates[0].content.parts[0].text;
+                appendMessage(aiText, false);
+                chatHistory.push({ role: "model", parts:[{ text: aiText }] });
+                
+            } catch (error) {
+                toggleTypingIndicator(false);
+                appendMessage(`⚠️ Error: ${error.message}`, false);
+                chatHistory.pop(); // Remove failed prompt so it doesn't break history
+            }
+        }
+
+        // Chat Input Listeners
+        document.getElementById('sendChatBtn').addEventListener('click', () => sendChatMessage(chatInput.value));
+        
+        // Prevent default Enter behavior on textarea to send message instead of new line
+        chatInput.addEventListener('keydown', (e) => { 
+            if (e.key === 'Enter' && !e.shiftKey) { 
+                e.preventDefault(); 
+                sendChatMessage(chatInput.value); 
+            } 
+        });
+
+        // Pipe Row-Level "AI Analysis" into the continuous Chat UI
+        window.analyzeRowData = (id) => {
+            const trade = trades.find(t => t.id === id);
+            if (!trade) return;
+            
+            chatWindow.classList.add('show');
+            chatInput.focus();
+            
+            const prompt = `Please analyze this specific trade I took:\nAsset: ${trade.asset}, Pattern: ${trade.setup}, Direction: ${trade.direction || 'N/A'}, Qty: ${trade.qty || 'N/A'}, Entry: ${trade.entry || 'N/A'}, Exit: ${trade.exit || 'N/A'}, Net P&L: ₹${trade.pnl || 'N/A'}.`;
+            sendChatMessage(prompt);
+        };
+
+        // Boot
+        init();
+    </script>
+</body>
+</html>
