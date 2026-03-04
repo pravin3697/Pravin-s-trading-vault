@@ -16,12 +16,11 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Flatpickr for Premium Custom Date Input -->
+    <!-- Flatpickr -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     
     <style>
-        /* Blended Dark Stealth Premium Theme */
         :root {
             --bg-color: #0b0e14;
             --panel-bg: #131722;
@@ -38,16 +37,13 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-family); line-height: 1.6; overflow-y: scroll; }
 
-        /* Beautiful, visible Dark Neon Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-color); }
         ::-webkit-scrollbar-thumb { background: rgba(0, 229, 255, 0.25); border-radius: 8px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0, 229, 255, 0.45); }
 
-        /* Fix White Autofill Bug */
         input:-webkit-autofill,
         input:-webkit-autofill:focus {
             -webkit-box-shadow: 0 0 0 30px var(--bg-color) inset !important;
@@ -55,7 +51,6 @@
             transition: background-color 5000s ease-in-out 0s;
         }
 
-        /* Master Sticky Navigation */
         .sticky-nav { position: sticky; top: 0; height: 72px; background-color: var(--bg-color); z-index: 100; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; }
         .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 20px; }
         .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; transition: opacity 0.2s; }
@@ -74,18 +69,10 @@
         .header-actions { display: flex; gap: 10px; align-items: center; }
         .container { max-width: 1400px; margin: 0 auto; padding: 0 20px 40px 20px; }
 
-        /* Unified Professional Buttons */
-        .btn { 
-            background-color: var(--card-bg); color: var(--text-main); 
-            border: 1px solid var(--border-color); height: 36px; padding: 0 16px; 
-            border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; 
-            transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; 
-        }
+        .btn { background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); height: 36px; padding: 0 16px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn:hover { background-color: rgba(0, 229, 255, 0.03); border-color: rgba(0, 229, 255, 0.3); color: var(--accent-neon); }
-
         .btn-primary { background-color: rgba(0, 229, 255, 0.02); border: 1px solid rgba(0, 229, 255, 0.3); color: var(--accent-neon); }
         .btn-primary:hover { background-color: rgba(0, 229, 255, 0.05); border-color: var(--accent-neon); box-shadow: 0 0 12px rgba(0, 229, 255, 0.15); }
-        
         .btn-icon-only { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; background-color: transparent; border: 1px solid transparent; color: var(--text-muted); }
         .btn-edit:hover { background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); color: #60a5fa; transform: translateY(-1px); }
         .btn-danger:hover { background-color: rgba(242, 54, 69, 0.1); border-color: rgba(242, 54, 69, 0.3); color: var(--loss-red); transform: translateY(-1px); }
@@ -104,56 +91,24 @@
         .chart-header { font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 12px; }
         .chart-container { position: relative; flex: 1; width: 100%; min-height: 180px; }
 
-        /* Main Tabs Layout */
         .tabs { display: flex; gap: 12px; margin-bottom: 24px; }
         .tab { padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: 400; color: var(--text-muted); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; background: rgba(19, 23, 34, 0.6); border: 1px solid var(--border-color); }
-        
-        .tab:hover:not(.active) { 
-            background-color: rgba(0, 229, 255, 0.02); border-color: rgba(0, 229, 255, 0.2); 
-            color: var(--text-main); box-shadow: 0 0 8px rgba(0, 229, 255, 0.05); 
-        }
+        .tab:hover:not(.active) { background-color: rgba(0, 229, 255, 0.02); border-color: rgba(0, 229, 255, 0.2); color: var(--text-main); box-shadow: 0 0 8px rgba(0, 229, 255, 0.05); }
+        .tab.active { background-color: rgba(0, 229, 255, 0.08) !important; border: 1px solid rgba(0, 229, 255, 0.5) !important; box-shadow: 0 4px 12px rgba(0, 229, 255, 0.15) !important; color: #ffffff !important; font-weight: 400 !important; }
 
-        .tab.active { 
-            background-color: rgba(0, 229, 255, 0.08) !important; border: 1px solid rgba(0, 229, 255, 0.5) !important; 
-            box-shadow: 0 4px 12px rgba(0, 229, 255, 0.15) !important; color: #ffffff !important; font-weight: 400 !important; 
-        }
-
-        /* UNIFIED SEARCH & FILTER BAR */
-        .search-filter-group {
-            display: flex; align-items: center; background-color: var(--bg-color);
-            border: 1px solid var(--border-color); border-radius: 6px;
-            margin-left: auto; height: 42px; transition: all 0.3s ease;
-        }
-        .search-filter-group:hover, .search-filter-group:focus-within {
-            border-color: rgba(0, 229, 255, 0.4); box-shadow: 0 0 12px rgba(0, 229, 255, 0.08);
-        }
+        .search-filter-group { display: flex; align-items: center; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 6px; margin-left: auto; height: 42px; transition: all 0.3s ease; }
+        .search-filter-group:hover, .search-filter-group:focus-within { border-color: rgba(0, 229, 255, 0.4); box-shadow: 0 0 12px rgba(0, 229, 255, 0.08); }
         .search-filter-group .search-icon { margin-left: 14px; color: var(--text-muted); width: 15px; height: 15px; }
-        .search-filter-group input {
-            border: none; background: transparent; height: 100%; width: 180px;
-            padding: 0 12px; color: var(--text-main); font-family: var(--font-family);
-            font-size: 13.5px; outline: none; box-shadow: none !important;
-        }
+        .search-filter-group input { border: none; background: transparent; height: 100%; width: 180px; padding: 0 12px; color: var(--text-main); font-family: var(--font-family); font-size: 13.5px; outline: none; box-shadow: none !important; }
         .search-filter-group input::placeholder { color: var(--text-muted); }
         .search-filter-group .divider { width: 1px; height: 22px; background-color: var(--border-color); }
         
         .custom-filter-dropdown { position: relative; height: 100%; display: flex; }
-        .custom-filter-dropdown .dropdown-trigger {
-            display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 16px; height: 100%;
-            cursor: pointer; color: var(--text-muted); font-size: 13.5px; font-weight: 500; transition: all 0.2s ease;
-            min-width: 155px;
-        }
+        .custom-filter-dropdown .dropdown-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 16px; height: 100%; cursor: pointer; color: var(--text-muted); font-size: 13.5px; font-weight: 500; transition: all 0.2s ease; min-width: 155px; }
         .custom-filter-dropdown .dropdown-trigger:hover, .custom-filter-dropdown.open .dropdown-trigger { color: var(--accent-neon); }
-        .custom-filter-dropdown .dropdown-menu {
-            position: absolute; top: calc(100% + 6px); right: 0; background-color: var(--panel-bg);
-            border: 1px solid var(--border-color); border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            opacity: 0; visibility: hidden; transform: translateY(-4px); transition: all 0.2s ease;
-            z-index: 4000; min-width: 180px; padding: 6px; backdrop-filter: blur(10px);
-        }
+        .custom-filter-dropdown .dropdown-menu { position: absolute; top: calc(100% + 6px); right: 0; background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); opacity: 0; visibility: hidden; transform: translateY(-4px); transition: all 0.2s ease; z-index: 4000; min-width: 180px; padding: 6px; backdrop-filter: blur(10px); }
         .custom-filter-dropdown.open .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
-        .custom-filter-dropdown .dropdown-item {
-            padding: 8px 12px; cursor: pointer; border-radius: 4px; transition: all 0.15s ease;
-            color: var(--text-main); font-size: 13px; margin-bottom: 2px;
-        }
+        .custom-filter-dropdown .dropdown-item { padding: 8px 12px; cursor: pointer; border-radius: 4px; transition: all 0.15s ease; color: var(--text-main); font-size: 13px; margin-bottom: 2px; }
         .custom-filter-dropdown .dropdown-item:last-child { margin-bottom: 0; }
         .custom-filter-dropdown .dropdown-item:hover { background-color: rgba(0, 229, 255, 0.03); color: var(--accent-neon); }
         .custom-filter-dropdown .dropdown-item.active { background-color: rgba(0, 229, 255, 0.08); color: var(--accent-neon); font-weight: 500; }
@@ -163,16 +118,13 @@
         .view-container.active { opacity: 1; visibility: visible; pointer-events: auto; z-index: 1; }
 
         .table-wrapper { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 6px; }
-        
         table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 1050px; table-layout: fixed; }
         th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); vertical-align: middle; transition: border-color 0.2s ease, color 0.2s ease; overflow: hidden; text-overflow: ellipsis; }
         th { position: sticky; top: 72px; background-color: var(--card-bg); z-index: 50; color: var(--text-muted); font-weight: 600; white-space: nowrap; border-bottom: none; border-right: none; box-shadow: inset 0 -1px 0 var(--border-color), inset -1px 0 0 var(--border-color); }
         th:last-child { box-shadow: inset 0 -1px 0 var(--border-color); }
-        
         tbody tr { transition: background-color 0.2s ease; }
         tr:last-child td { border-bottom: none; }
         td:last-child { border-right: none; }
-        
         tbody tr:hover { background-color: rgba(0, 229, 255, 0.03); }
         tbody tr:hover td { border-bottom-color: rgba(0, 229, 255, 0.15); border-right-color: rgba(0, 229, 255, 0.05); color: #ffffff; }
         tbody tr:hover td:first-child { position: relative; }
@@ -181,7 +133,6 @@
         .date-col { white-space: nowrap; font-weight: 500; }
         .profit { color: var(--profit-green); font-weight: 600; }
         .loss { color: var(--loss-red); font-weight: 600; }
-
         .tag { padding: 4px 10px; border-radius: 4px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.3px; white-space: nowrap; display: inline-block; text-transform: capitalize; }
         .tag.long { color: var(--profit-green); background-color: rgba(8, 153, 129, 0.15); border: 1px solid rgba(8, 153, 129, 0.2); }
         .tag.short { color: var(--loss-red); background-color: rgba(242, 54, 69, 0.15); border: 1px solid rgba(242, 54, 69, 0.2); }
@@ -189,7 +140,6 @@
         
         .action-btns { display: flex; gap: 6px; flex-wrap: nowrap; justify-content: center; }
         .thumb-row { display: flex; gap: 6px; align-items: center; justify-content: center; }
-        
         .thumb-link { display: block; width: 42px; height: 28px; cursor: pointer; }
         .thumb-img { width: 42px; height: 28px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease; }
         .thumb-img:hover { border-color: rgba(0, 229, 255, 0.4); box-shadow: 0 4px 10px rgba(0, 229, 255, 0.15); transform: scale(1.15); z-index: 10; position: relative; }
@@ -200,14 +150,12 @@
         .card-img-link { display: block; width: 100%; height: 200px; cursor: zoom-in; position: relative; overflow: hidden; flex-shrink: 0; }
         .card-img { width: 100%; height: 100%; object-fit: cover; border-bottom: 1px solid var(--border-color); background-color: #000; transition: transform 0.3s ease; }
         .card-img-link:hover .card-img { transform: scale(1.02); }
-        
         .badge-img-count { position: absolute; top: 12px; right: 12px; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); color: rgba(255,255,255,0.7); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 4px; transition: all 0.3s ease; }
         .card:hover .badge-img-count { background: rgba(0, 229, 255, 0.1); color: var(--accent-neon); border-color: rgba(0, 229, 255, 0.3); }
         
         .card-content { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .card-title { font-size: 16px; font-weight: 600; }
-        
         .pill { padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; white-space: nowrap; }
         .pill.long-pill { background-color: rgba(8, 153, 129, 0.15); color: var(--profit-green); border: 1px solid rgba(8, 153, 129, 0.2); }
         .pill.short-pill { background-color: rgba(242, 54, 69, 0.15); color: var(--loss-red); border: 1px solid rgba(242, 54, 69, 0.2); }
@@ -223,42 +171,22 @@
         .form-row { display: flex; gap: 16px; }
         .form-row .form-group { flex: 1; }
         label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-muted); }
-        
         input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
-        
-        input, textarea { 
-            width: 100%; padding: 10px; background-color: var(--bg-color); 
-            border: 1px solid var(--border-color); color: var(--text-main); 
-            border-radius: 4px; font-family: var(--font-family); transition: all 0.3s ease; 
-        }
+        input, textarea { width: 100%; padding: 10px; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 4px; font-family: var(--font-family); transition: all 0.3s ease; }
         input:hover, textarea:hover { border-color: rgba(0, 229, 255, 0.4); box-shadow: 0 4px 12px rgba(0, 229, 255, 0.05); }
         input:focus, textarea:focus { outline: none; border-color: var(--accent-neon); box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.1); }
-
         .input-icon-wrapper { position: relative; display: block; }
-        .success-tick {
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px;
-            color: var(--profit-green); opacity: 0; visibility: hidden; transition: all 0.3s ease; pointer-events: none;
-        }
+        .success-tick { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--profit-green); opacity: 0; visibility: hidden; transition: all 0.3s ease; pointer-events: none; }
         .success-tick.show { opacity: 0.6; visibility: visible; }
 
         .custom-select-wrapper { position: relative; width: 100%; user-select: none; }
-        .custom-select-trigger {
-            width: 100%; padding: 10px; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main);
-            border-radius: 4px; cursor: pointer; font-family: var(--font-family); transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center;
-        }
+        .custom-select-trigger { width: 100%; padding: 10px; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 4px; cursor: pointer; font-family: var(--font-family); transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center; }
         .custom-select-trigger:hover { border-color: rgba(0, 229, 255, 0.4); box-shadow: 0 4px 12px rgba(0, 229, 255, 0.05); }
         .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent-neon); box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.1); }
-        
         .chevron { transition: transform 0.3s ease; color: var(--text-muted); display: flex; align-items: center; }
         .custom-select-wrapper.open .chevron { transform: rotate(180deg); color: var(--accent-neon); }
-        
-        .custom-select-options {
-            position: absolute; top: calc(100% + 4px); left: 0; right: 0; background-color: var(--panel-bg);
-            border: 1px solid var(--border-color); border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.15s ease, transform 0.15s ease;
-            z-index: 4000; max-height: 220px; overflow-y: auto; padding: 6px; transform: translateY(-4px); backdrop-filter: blur(10px);
-        }
+        .custom-select-options { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.15s ease, transform 0.15s ease; z-index: 4000; max-height: 220px; overflow-y: auto; padding: 6px; transform: translateY(-4px); backdrop-filter: blur(10px); }
         .custom-select-wrapper.open .custom-select-options { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
         .custom-option { padding: 10px 12px; cursor: pointer; border-radius: 4px; transition: background-color 0.15s ease, color 0.15s ease; color: var(--text-main); font-size: 14px; margin-bottom: 2px; }
         .custom-option:last-child { margin-bottom: 0; }
@@ -296,25 +224,27 @@
         .lightbox-img { max-width: 95vw; max-height: 95vh; object-fit: contain; transform: scale(0.98); opacity: 0; transition: transform 0.2s ease, opacity 0.2s ease; }
         .lightbox.show .lightbox-img { transform: scale(1); opacity: 1; }
         
+        /* Simple Windows-style Close Button */
         .lightbox-close { 
             position: absolute; display: flex; align-items: center; justify-content: center; 
             width: 48px; height: 48px; background: transparent; border: none; 
             cursor: pointer; z-index: 4001; transition: color 0.15s ease; color: #ffffff; 
             top: 16px; right: 16px;
         }
-        .lightbox-close:hover { color: var(--loss-red); }
+        .lightbox-close:hover { color: #f23645; }
         
+        /* Windows Photos Style Circular Navigation Arrows */
         .lightbox-nav { 
             position: absolute; display: flex; align-items: center; justify-content: center; 
-            width: 36px; height: 64px; background: rgba(20, 20, 20, 0.5); border: none; border-radius: 6px;
+            width: 44px; height: 44px; background: rgba(30, 30, 30, 0.5); border: none; border-radius: 50%;
             cursor: pointer; z-index: 4001; transition: background 0.15s ease; color: #ffffff; 
             top: 50%; transform: translateY(-50%); opacity: 0; visibility: hidden; 
         }
         .lightbox.show .lightbox-nav.visible { opacity: 1; visibility: visible; }
-        .lightbox-prev { left: 16px; }
-        .lightbox-next { right: 16px; }
-        .lightbox-nav:hover { background: rgba(255, 255, 255, 0.15); }
-        .lightbox-nav:active { background: rgba(255, 255, 255, 0.1); transform: translateY(-50%) scale(0.98); }
+        .lightbox-prev { left: 24px; }
+        .lightbox-next { right: 24px; }
+        .lightbox-nav:hover { background: rgba(60, 60, 60, 0.8); }
+        .lightbox-nav:active { background: rgba(80, 80, 80, 0.9); transform: translateY(-50%) scale(0.96); }
         
         .lightbox-indicator { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); color: var(--text-main); background: transparent; padding: 6px 16px; font-size: 13px; font-weight: 500; z-index: 4001; display: none; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
     </style>
@@ -389,7 +319,6 @@
                         <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </div>
                     <div class="dropdown-menu" id="dynamicDropdownMenu">
-                        <!-- Populated by JS based on Active Tab -->
                     </div>
                 </div>
             </div>
@@ -431,19 +360,19 @@
 
     <div class="lightbox" id="lightbox">
         <button class="lightbox-close" id="lightboxClose">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
         </button>
         <button class="lightbox-nav lightbox-prev" id="lightboxPrev">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 18l-6-6 6-6"></path>
             </svg>
         </button>
         <img src="" alt="Chart" class="lightbox-img" id="lightboxImg">
         <button class="lightbox-nav lightbox-next" id="lightboxNext">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 18l6-6-6-6"></path>
             </svg>
         </button>
@@ -1064,8 +993,8 @@
         }
 
         // ====== CLOUD SYNC FUNCTIONS ====== //
-
-        // Pushes individual logs automatically (Used when adding/editing/deleting a single log)
+        // To avoid CORS Preflight blocks, we send POSTs as simple strings without Content-Type header.
+        
         function syncToGoogleSheets(dataObj, action) {
             if (!feeSettings.sheetUrl) return; 
             try {
@@ -1078,9 +1007,10 @@
                     if (safeData.image2 && safeData.image2.startsWith('data:image')) delete safeData.image2;
                     payload = { action: 'save', data: safeData };
                 }
+                
+                // Pure stringify body without explicit JSON header avoids preflight CORS checks on Google Servers.
                 fetch(feeSettings.sheetUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload),
                     redirect: 'follow'
                 }).catch(err => console.log("Cloud sync delayed/failed:", err));
@@ -1089,7 +1019,6 @@
             }
         }
 
-        // Silent Pull on Initial Load
         async function pullFromGoogleSheetsSilent() {
             try {
                 let res = await fetch(feeSettings.sheetUrl + "?action=get", { redirect: 'follow' });
@@ -1099,25 +1028,11 @@
                     trades = data; saveData(); renderUI(); updateSyncStatusUI(true);
                 }
             } catch (err) {
-                // Try fallback to POST if GET fails
-                try {
-                    let res = await fetch(feeSettings.sheetUrl, {
-                        method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ action: 'get' }),
-                        redirect: 'follow'
-                    });
-                    let data = await res.json();
-                    if (Array.isArray(data)) {
-                        trades = data; saveData(); renderUI(); updateSyncStatusUI(true);
-                    }
-                } catch(e2) {
-                    console.log("Silent cloud fetch failed.");
-                    updateSyncStatusUI(false);
-                }
+                console.log("Silent cloud fetch failed.");
+                updateSyncStatusUI(false);
             }
         }
 
-        // Manual Pull Action (Button)
         document.getElementById('pullCloudBtn').addEventListener('click', async () => {
             if (!feeSettings.sheetUrl) return alert("Please set your Google Web App URL first.");
             document.getElementById('pullCloudBtn').textContent = "Pulling...";
@@ -1128,20 +1043,19 @@
                 if (Array.isArray(data)) {
                     trades = data; saveData(); renderUI(); updateSyncStatusUI(true);
                     alert("Data fully synchronized from Cloud!");
+                } else {
+                    throw new Error("Invalid data format received.");
                 }
             } catch (err) {
-                // If it fails, give a detailed error regarding strict browser rules
-                alert(`Sync Failed: ${err.message}\n\nTroubleshooting:\n1. Your Google Script MUST be deployed as "Execute as: Me" and "Who has access: Anyone".\n2. Since you are running from "file:///", your browser strict security might block the fetch request. To fix this completely, host this HTML file on a local server or GitHub pages.`);
+                alert(`Sync Failed: ${err.message}\n\nTroubleshooting:\n1. Open Google Script Editor.\n2. Click 'Deploy' -> 'New Deployment'.\n3. Set 'Execute as' to 'Me'.\n4. Set 'Who has access' to 'Anyone' (Very Important).\n5. Copy the new Web App URL and update it here.`);
             }
             document.getElementById('pullCloudBtn').textContent = "Pull from Cloud";
         });
 
-        // Manual Push Action (Button)
         document.getElementById('pushCloudBtn').addEventListener('click', async () => {
             if (!feeSettings.sheetUrl) return alert("Please set your Google Web App URL first.");
             document.getElementById('pushCloudBtn').textContent = "Pushing...";
             try {
-                // Creates a clean copy of trades without massive base64 image strings to avoid Google Script size limits
                 const cleanTrades = trades.map(t => {
                     let safe = { ...t };
                     if (safe.image1 && safe.image1.startsWith('data:image')) safe.image1 = "";
@@ -1151,19 +1065,17 @@
                 
                 await fetch(feeSettings.sheetUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action: 'saveAll', data: cleanTrades }),
                     redirect: 'follow'
                 });
                 alert("All local data successfully pushed to Cloud!");
                 updateSyncStatusUI(true);
             } catch (err) {
-                alert(`Push Failed: ${err.message}\n\nTroubleshooting:\n1. Ensure Google Script is deployed properly.\n2. Running from "file:///" might block outbound API calls due to strict browser security.`);
+                alert(`Push Failed: ${err.message}\n\nTroubleshooting:\n1. Open Google Script Editor.\n2. Click 'Deploy' -> 'New Deployment'.\n3. Set 'Execute as' to 'Me'.\n4. Set 'Who has access' to 'Anyone' (Very Important).`);
             }
             document.getElementById('pushCloudBtn').textContent = "Push to Cloud";
         });
 
-        // Settings Modal Open
         document.getElementById('settingsBtn').addEventListener('click', () => {
             document.getElementById('setBrokerage').value = feeSettings.brokerage;
             document.getElementById('setSTT').value = feeSettings.stt;
@@ -1174,7 +1086,6 @@
             document.getElementById('settingsModalOverlay').style.display = 'flex';
         });
 
-        // Settings Form Save
         document.getElementById('settingsForm').addEventListener('submit', (e) => {
             e.preventDefault();
             feeSettings = {
