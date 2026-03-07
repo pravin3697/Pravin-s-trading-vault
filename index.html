@@ -186,7 +186,7 @@
         .custom-filter-dropdown .dropdown-item:hover { background-color: transparent; color: #ffffff; border-color: var(--accent-neon); }
         .custom-filter-dropdown .dropdown-item.active { background-color: transparent; color: #ffffff; border-color: none; }
 
-        /* GRID BLOWOUT FIX: Prevents table from stretching the whole page */
+        /* GRID BLOWOUT FIX */
         .views-wrapper { display: grid; position: relative; min-height: 60vh; min-width: 0; max-width: 100%; }
         .view-container { grid-area: 1 / 1; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.3s ease, visibility 0.3s ease; min-width: 0; max-width: 100%; }
         .view-container.active { opacity: 1; visibility: visible; pointer-events: auto; z-index: 1; }
@@ -207,6 +207,8 @@
         td:last-child { border-right: none; }
         tbody tr { transition: background-color 0.2s ease; }
         tr:last-child td { border-bottom: none; }
+        
+        /* Desktop specific hover styles - protected via media queries further down */
         tbody tr:hover { background-color: rgba(0, 151, 167, 0.03); }
         tbody tr:hover td { border-bottom-color: rgba(0, 151, 167, 0.15); border-right-color: rgba(0, 151, 167, 0.05); color: #ffffff; }
         tbody tr:hover td:first-child::before { content: ''; position: absolute; left: 0; top: 0; bottom: -1px; width: 3px; background-color: var(--accent-neon); box-shadow: 0 0 12px var(--accent-neon); z-index: 2; }
@@ -380,30 +382,44 @@
 
             /* APP CARD LAYOUT FOR TABLE */
             .table-wrapper { border: none !important; background: transparent !important; overflow: hidden !important; width: 100%; }
-            table, tbody, tr, td { display: block; width: 100%; }
-            table { min-width: 0 !important; } 
-            thead { display: none !important; }
+            
+            /* Crucial Fix: Unbinds desktop min-width enforcing the overflow */
+            table { min-width: 0 !important; width: 100% !important; display: block; }
+            thead { display: none !important; } /* Hide Header Row Ghosts */
+            tbody, tr, td { display: block; width: 100%; }
             
             tbody tr { 
                 background: var(--bg-color) !important; 
                 border: 1px solid var(--border-color); 
                 border-radius: 8px; 
                 margin-bottom: 16px; 
-                padding: 12px 16px; 
-                display: flex;
-                flex-direction: column;
-                gap: 0;
+                padding: 12px 16px;
+                box-sizing: border-box; 
+            }
+            
+            /* COMPLETELY DISABLES DESKTOP HOVER GLITCH ON MOBILE */
+            tbody tr:hover { background: var(--bg-color) !important; }
+            tbody tr:hover td { border-bottom-color: rgba(255,255,255,0.05) !important; color: inherit; }
+            tbody tr:hover td:first-child::before {
+                content: attr(data-label) !important;
+                position: static !important;
+                width: auto !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                z-index: 1;
             }
             
             td { 
-                display: flex; 
-                justify-content: space-between; 
+                /* Grid approach bounds value cells from pushing out of the box */
+                display: grid; 
+                grid-template-columns: auto 1fr; 
+                gap: 16px;
                 align-items: center; 
                 text-align: right; 
                 padding: 10px 0; 
                 border-bottom: 1px solid rgba(255,255,255,0.05) !important; 
                 border-right: none !important;
-                width: 100%;
+                word-break: break-word;
             }
             td:last-child { border-bottom: none !important; padding-bottom: 0; }
             td:first-child { padding-top: 0; }
@@ -416,20 +432,9 @@
                 color: var(--text-muted); 
                 text-transform: uppercase; 
                 text-align: left;
-                margin-right: 16px;
-                white-space: nowrap;
-                flex-shrink: 0; 
-            }
-
-            /* Forces all data content to wrap tightly on the right side */
-            td > span, td > div {
-                text-align: right;
-                word-break: break-word;
-                display: block;
-                max-width: 100%;
             }
             
-            .action-btns { width: auto; justify-content: flex-end; gap: 12px; }
+            .action-btns { width: 100%; justify-content: flex-end; gap: 12px; }
             .thumb-row { justify-content: flex-end; }
         }
 
@@ -452,57 +457,34 @@
             .stat-card { padding: 12px 8px; text-align: center; align-items: center; }
             .stat-value { font-size: 18px; }
             .stat-label { font-size: 11px; }
-            .stat-footer { display: none; }
+            .stat-footer { display: none; } /* Hide complex stat footers on mobile */
             
-            /* Mobile Accordion Toggle for Chart & Edge Panel */
+            /* Smooth Accordion Dropdown for Analytics (Muted Colors) */
             .mobile-analytics-toggle { 
                 display: flex; justify-content: space-between; align-items: center; 
-                width: 100%; background: rgba(0, 151, 167, 0.05); border: 1px solid rgba(0, 151, 167, 0.2); 
-                color: var(--accent-neon); padding: 12px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; 
-                cursor: pointer; margin-bottom: 24px; transition: all 0.3s;
+                width: 100%; background: #151821; border: 1px solid var(--border-color); 
+                color: var(--text-muted); padding: 14px 16px; border-radius: 8px; font-weight: 500; font-size: 13px; 
+                cursor: pointer; margin-bottom: 0; transition: background 0.2s, border-radius 0.2s; 
+                box-shadow: 0 2px 6px rgba(0,0,0,0.2); outline: none;
             }
-            .mobile-analytics-toggle:active { transform: scale(0.98); }
-            .mobile-analytics-toggle svg { transition: transform 0.3s ease; }
+            .mobile-analytics-toggle:active { background: #1a1e29; }
+            .mobile-analytics-toggle svg { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
             .mobile-analytics-toggle.open svg { transform: rotate(180deg); }
-            .advanced-analytics-wrapper { display: none; } /* Hidden by Default */
-            .advanced-analytics-wrapper.open { display: block; }
-            .dashboard-main { display: flex; flex-direction: column; gap: 12px; margin-bottom: 0; }
+            .mobile-analytics-toggle.open { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent; margin-bottom: 0; }
+            
+            /* Grid Expansion Animation */
+            .advanced-analytics-wrapper { 
+                display: grid; 
+                grid-template-rows: 0fr; 
+                transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1), margin 0.4s; 
+                margin-bottom: 24px;
+            }
+            .advanced-analytics-wrapper.open { grid-template-rows: 1fr; margin-bottom: 24px; }
+            .advanced-analytics-inner { overflow: hidden; min-height: 0; } /* Required for Grid Animation to work */
+            
+            /* Inner dashboard spacing resets */
+            .advanced-analytics-inner .dashboard-main { display: flex; flex-direction: column; gap: 12px; margin-bottom: 0; padding-top: 12px; }
 
-            /* Advanced Analytics Mobile Grid Conversion */
-            .edge-panel {
-                background: transparent;
-                border: none;
-                padding: 0;
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-            .edge-panel-title { display: none; }
-            #advancedAnalytics { display: contents; }
-            .edge-section {
-                background: var(--bg-color); 
-                border: 1px solid var(--border-color);
-                border-radius: 8px;
-                padding: 12px;
-                margin: 0 !important; 
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-            .edge-item { background: transparent; border: none; padding: 0; }
-            
-            /* Full-width spanning for sections with Bar Charts */
-            #directionEdgeSection, 
-            #dayEdgeSection, 
-            #sessionEdgeSection {
-                grid-column: span 2;
-            }
-            /* 2-Column flow for plain text sections */
-            #topSetupSection, 
-            #otherSetupsSection {
-                grid-column: span 1;
-            }
-            
             /* UN-STACKED Search & Filter on Mobile */
             .search-filter-group { flex-direction: row; height: 42px; border-radius: 6px; border: 1px solid var(--border-color); width: 100%; }
             .search-filter-group .search-icon { top: auto; left: 14px; position: static; margin-left: 14px; flex-shrink: 0; }
@@ -602,48 +584,50 @@
         </button>
 
         <div id="advancedAnalyticsWrapper" class="advanced-analytics-wrapper">
-            <div class="dashboard-main">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <span>Cumulative Equity Curve</span>
-                        <span id="chart-mdd" style="display: inline-block; font-size: 11px; font-weight: 600; color: rgba(242, 54, 69, 0.7); background: transparent; padding: 0;">Max DD: ₹0.00 (0.00%)</span>
-                    </div>
-                    <div class="chart-container"><canvas id="pnlChart"></canvas></div>
-                </div>
-                
-                <div class="edge-panel">
-                    <div class="edge-panel-title">
-                        <span>Edge Analytics</span>
+            <div class="advanced-analytics-inner">
+                <div class="dashboard-main">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <span>Cumulative Equity Curve</span>
+                            <span id="chart-mdd" style="display: inline-block; font-size: 11px; font-weight: 600; color: rgba(242, 54, 69, 0.7); background: transparent; padding: 0;">Max DD: ₹0.00 (0.00%)</span>
+                        </div>
+                        <div class="chart-container"><canvas id="pnlChart"></canvas></div>
                     </div>
                     
-                    <div class="edge-section" id="directionEdgeSection">
-                        <div class="edge-title-sm">Direction Edge</div>
-                        <div class="bar-row"><span style="color: var(--profit-green);">Longs</span> <span id="edge-long-pnl">₹0.00</span></div>
-                        <div class="bar-bg"><div class="bar-fill-long" id="edge-long-bar" style="width: 50%;"></div></div>
+                    <div class="edge-panel">
+                        <div class="edge-panel-title">
+                            <span>Edge Analytics</span>
+                        </div>
                         
-                        <div class="bar-row"><span style="color: var(--loss-red);">Shorts</span> <span id="edge-short-pnl">₹0.00</span></div>
-                        <div class="bar-bg"><div class="bar-fill-short" id="edge-short-bar" style="width: 50%;"></div></div>
-                    </div>
-
-                    <div class="edge-section" id="topSetupSection" style="display: flex; flex-direction: column; margin-bottom: 0;">
-                        <div class="edge-title-sm" style="margin-bottom: 12px;">Top Setup</div>
-                        <div id="setupEdgeList" class="setup-edge-list"></div>
-                    </div>
-
-                    <div id="advancedAnalytics">
-                        <div class="edge-section" id="otherSetupsSection" style="display: flex; flex-direction: column; margin-top: 20px;">
-                            <div class="edge-title-sm" style="margin-bottom: 12px;">Other Setups</div>
-                            <div id="advancedSetupEdgeList" class="setup-edge-list"></div>
+                        <div class="edge-section">
+                            <div class="edge-title-sm">Direction Edge</div>
+                            <div class="bar-row"><span style="color: var(--profit-green);">Longs</span> <span id="edge-long-pnl">₹0.00</span></div>
+                            <div class="bar-bg"><div class="bar-fill-long" id="edge-long-bar" style="width: 50%;"></div></div>
+                            
+                            <div class="bar-row"><span style="color: var(--loss-red);">Shorts</span> <span id="edge-short-pnl">₹0.00</span></div>
+                            <div class="bar-bg"><div class="bar-fill-short" id="edge-short-bar" style="width: 50%;"></div></div>
                         </div>
 
-                        <div class="edge-section" id="dayEdgeSection" style="display: flex; flex-direction: column;">
-                            <div class="edge-title-sm" style="margin-bottom: 12px;">Best Trading Days</div>
-                            <div id="dayEdgeList"></div>
+                        <div class="edge-section" style="display: flex; flex-direction: column; margin-bottom: 0;">
+                            <div class="edge-title-sm" style="margin-bottom: 12px;">Top Setup</div>
+                            <div id="setupEdgeList" class="setup-edge-list"></div>
                         </div>
 
-                        <div class="edge-section" id="sessionEdgeSection" style="display: flex; flex-direction: column; margin-bottom: 0;">
-                            <div class="edge-title-sm" style="margin-bottom: 12px;">Session Edge</div>
-                            <div id="sessionEdgeList"></div>
+                        <div id="advancedAnalytics">
+                            <div class="edge-section" style="display: flex; flex-direction: column; margin-top: 20px;">
+                                <div class="edge-title-sm" style="margin-bottom: 12px;">Other Setups</div>
+                                <div id="advancedSetupEdgeList" class="setup-edge-list"></div>
+                            </div>
+
+                            <div class="edge-section" id="dayEdgeSection" style="display: flex; flex-direction: column;">
+                                <div class="edge-title-sm" style="margin-bottom: 12px;">Best Trading Days</div>
+                                <div id="dayEdgeList"></div>
+                            </div>
+
+                            <div class="edge-section" id="sessionEdgeSection" style="display: flex; flex-direction: column; margin-bottom: 0;">
+                                <div class="edge-title-sm" style="margin-bottom: 12px;">Session Edge</div>
+                                <div id="sessionEdgeList"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1086,7 +1070,6 @@
             renderTagSelector();
             setupKeyboardShortcuts();
             
-            // Initialize Mobile Analytics Toggle logic
             const mobAnalyticsBtn = document.getElementById('mobileAnalyticsBtn');
             const advAnalyticsWrapper = document.getElementById('advancedAnalyticsWrapper');
             if (mobAnalyticsBtn && advAnalyticsWrapper) {
@@ -1593,28 +1576,24 @@
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td data-label="Date & Time" class="date-col"><span>${formatDate(trade.date)}</span></td>
-                    <td data-label="Asset">
-                        <div style="font-weight: 600;">
-                            ${trade.asset || 'Unknown'}
-                            ${isMissed ? '<br><span style="font-size: 10px; color: var(--warning-yellow);">(Missed)</span>' : ''}
-                        </div>
+                    <td data-label="Date & Time" class="date-col">${formatDate(trade.date)}</td>
+                    <td data-label="Asset" style="font-weight: 600;">
+                        ${trade.asset || 'Unknown'}
+                        ${isMissed ? '<br><span style="font-size: 10px; color: var(--warning-yellow);">(Missed)</span>' : ''}
                     </td>
-                    <td data-label="Charts"><div>${thumbHtml}</div></td>
+                    <td data-label="Charts">${thumbHtml}</td>
                     <td data-label="Setup & Regime">
-                        <div>
-                            <div style="font-weight: 500;">${trade.setup || '-'}</div>
-                            ${regimeHtml}
-                        </div>
+                        <div style="font-weight: 500;">${trade.setup || '-'}</div>
+                        ${regimeHtml}
                     </td>
-                    <td data-label="Direction"><span>${dirDisplay}</span></td>
-                    <td data-label="Qty"><span>${isSetup ? '-' : (trade.qty || '-')}</span></td>
-                    <td data-label="Entry"><span>${isSetup ? '-' : formatPrice(trade.entry)}</span></td>
-                    <td data-label="Stoploss"><span>${isSetup ? '-' : formatPrice(trade.sl)}</span></td>
-                    <td data-label="Exit"><span>${isSetup ? '-' : formatPrice(trade.exit)}</span></td>
-                    <td data-label="RRR" style="color: ${rrrColor}; font-weight: 600;"><span>${isSetup ? '-' : (rrrStr || '-')}</span></td>
-                    <td data-label="Fees" style="color: var(--text-muted);"><span>${feesDisplay}</span></td>
-                    <td data-label="P&L"><span>${pnlDisplay}</span></td>
+                    <td data-label="Direction">${dirDisplay}</td>
+                    <td data-label="Qty">${isSetup ? '-' : (trade.qty || '-')}</td>
+                    <td data-label="Entry">${isSetup ? '-' : formatPrice(trade.entry)}</td>
+                    <td data-label="Stoploss">${isSetup ? '-' : formatPrice(trade.sl)}</td>
+                    <td data-label="Exit">${isSetup ? '-' : formatPrice(trade.exit)}</td>
+                    <td data-label="RRR" style="color: ${rrrColor}; font-weight: 600;">${isSetup ? '-' : (rrrStr || '-')}</td>
+                    <td data-label="Fees" style="color: var(--text-muted);">${feesDisplay}</td>
+                    <td data-label="P&L">${pnlDisplay}</td>
                     <td data-label="Actions">
                         <div class="action-btns">
                             <button class="btn-icon-only btn-edit" onclick="editTrade(${trade.id})" title="Edit">${editIcon}</button>
@@ -2446,3 +2425,4 @@
     </script>
 </body>
 </html>
+```
