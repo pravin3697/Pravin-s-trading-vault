@@ -4,6 +4,7 @@
   "description": "A professional trading journal and analytics dashboard.",
   "start_url": "./index.html",
   "display": "standalone",
+  "display_override": ["window-controls-overlay"],
   "background_color": "#0b0e14",
   "theme_color": "#0097a7",
   "icons":[
