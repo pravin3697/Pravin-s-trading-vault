@@ -1,10 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0e14">
   <title>The Trading Vault</title>
+
+  <!-- PWA Manifest & iOS Support -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Trading Vault">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230b0e14'/><path d='M50 5 L88.97 27.5 L88.97 72.5 L50 95 L11.03 72.5 L11.03 27.5 Z' fill='none' stroke='%230097a7' stroke-width='6' stroke-linejoin='round'/><circle cx='50' cy='50' r='26' fill='none' stroke='%230097a7' stroke-width='2' stroke-dasharray='4 4' opacity='0.6'/><circle cx='50' cy='50' r='18' fill='none' stroke='%230097a7' stroke-width='2' opacity='0.8'/><path d='M32 62 L45 50 L52 56 L66 40' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/><path d='M56 40 L66 40 L66 50' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 5 L88.97 27.5 L88.97 72.5 L50 95 L11.03 72.5 L11.03 27.5 Z' fill='none' stroke='%230097a7' stroke-width='6' stroke-linejoin='round'/><circle cx='50' cy='50' r='26' fill='none' stroke='%230097a7' stroke-width='2' stroke-dasharray='4 4' opacity='0.6'/><circle cx='50' cy='50' r='18' fill='none' stroke='%230097a7' stroke-width='2' opacity='0.8'/><path d='M32 62 L45 50 L52 56 L66 40' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/><path d='M56 40 L66 40 L66 50' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 
@@ -80,6 +87,10 @@
         .btn-accent { background-color: #008080; color: var(--bg-color); border: 1px solid #008080; height: 36px; width: 36px; padding: 0; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
         .btn-accent:hover { background-color: #006666; border-color: #006666;}
         .btn-accent:active { transform: scale(0.95); }
+
+        .btn-install { background-color: rgba(0, 151, 167, 0.15); border: 1px solid var(--accent-neon); color: var(--accent-neon); box-shadow: 0 0 8px rgba(0, 151, 167, 0.3); animation: pulse 2s infinite; }
+        .btn-install:hover { background-color: var(--accent-neon); color: var(--bg-color); }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 151, 167, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(0, 151, 167, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 151, 167, 0); } }
         
         .btn-text { display: inline-flex; align-items: center; gap: 6px; background: transparent; border: none; color: var(--text-muted); font-size: 13px; font-weight: 500; cursor: pointer; transition: color 0.2s ease, transform 0.1s ease; font-family: var(--font-family); padding: 4px 0; margin: 0; }
         .btn-text:hover { color: var(--accent-neon); }
@@ -370,6 +381,10 @@
         }
 
         @media (max-width: 768px) {
+            .header-actions { gap: 6px; }
+            .btn-primary svg { width: 16px; height: 16px; }
+            .btn-install svg { width: 16px; height: 16px; }
+            
             .tabs { flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: 16px; }
             
             .view-toggle-group { 
@@ -453,13 +468,12 @@
             h1 { font-size: 15px; letter-spacing: 1px; }
             .vault-logo { width: 28px; height: 28px; }
             
-            .header-actions { gap: 6px; }
-            .btn-accent, #settingsBtn, #shortcutsBtn { height: 32px !important; width: 32px !important; }
-            .btn-accent svg, #settingsBtn svg, #shortcutsBtn svg { width: 16px; height: 16px; }
+            .btn-accent, #settingsBtn, #shortcutsBtn, #installAppBtn { height: 32px !important; width: 32px !important; }
             #shortcutsBtn { display: none !important; }
 
             .container { padding: 0 12px 30px 12px; margin-top: 16px !important; }
             
+            /* Hide Missed P&L on Mobile entirely to save space */
             #stat-card-missed { display: none !important; }
             .stats-row { grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
             
@@ -541,6 +555,11 @@
             <div class="header-actions">
                 <button class="btn-accent" id="openModalBtn" title="Log Trade / Setup">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+
+                <!-- Hidden by default, activated via JS when PWA install is available -->
+                <button class="btn btn-primary btn-install" id="installAppBtn" title="Install App" style="display: none; padding: 0; width: 36px; justify-content: center;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 </button>
                 
                 <button class="btn btn-primary" id="shortcutsBtn" title="Keyboard Shortcuts" style="padding: 0; width: 36px; justify-content: center;">
@@ -1077,12 +1096,43 @@
             renderTagSelector();
             setupKeyboardShortcuts();
             
+            // Initialize Mobile Analytics Toggle logic
             const mobAnalyticsBtn = document.getElementById('mobileAnalyticsBtn');
             const advAnalyticsWrapper = document.getElementById('advancedAnalyticsWrapper');
             if (mobAnalyticsBtn && advAnalyticsWrapper) {
                 mobAnalyticsBtn.addEventListener('click', function() {
                     this.classList.toggle('open');
                     advAnalyticsWrapper.classList.toggle('open');
+                });
+            }
+
+            // PWA Installation Logic
+            let deferredPrompt;
+            const installBtn = document.getElementById('installAppBtn');
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                if(installBtn) installBtn.style.display = 'inline-flex';
+            });
+
+            if(installBtn) {
+                installBtn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        deferredPrompt = null;
+                        installBtn.style.display = 'none';
+                    }
+                });
+            }
+
+            // Register Basic Service Worker (Needed for PWA validation)
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js').catch(err => {
+                        console.log('SW registration skipped or failed. Run on HTTPS to enable PWA.');
+                    });
                 });
             }
 
