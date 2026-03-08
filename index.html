@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -599,8 +600,6 @@
                 <button class="btn-accent" id="openModalBtn" title="Log Trade / Setup">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
-
-              
                 
                 <button class="btn btn-primary" id="shortcutsBtn" title="Keyboard Shortcuts" style="padding: 0; width: 36px; justify-content: center;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" ry="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8.01" y2="16"></line><line x1="16" y1="16" x2="16.01" y2="16"></line></svg>
@@ -817,10 +816,12 @@
         </div>
     </div>
 
+    <!-- SETTINGS MODAL (With Professional Auth UI) -->
     <div class="modal-overlay" id="settingsModalOverlay">
-        <div class="modal" style="max-width: 420px; padding: 28px;">
+        <div class="modal" style="max-width: 480px; padding: 28px;">
             <div class="modal-header" style="margin-bottom: 24px;"><h2 id="settingsTitle" style="margin: 0;">Settings</h2><button class="close-btn" id="closeSettingsBtn">&times;</button></div>
             <form id="settingsForm">
+                
                 <div style="margin-bottom: 24px;">
                     <div class="section-title">FEE DEFAULTS</div>
                     <div class="form-row">
@@ -835,19 +836,39 @@
                 
                 <div style="margin-bottom: 24px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px;">
-                        <div class="section-title" style="margin:0; border:none; padding:0;">CLOUD SYNC</div>
+                        <div class="section-title" style="margin:0; border:none; padding:0;">CLOUD SYNC (FIREBASE)</div>
                         <span id="syncStatus" style="font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 6px;"></span>
                     </div>
-                    <label style="margin-bottom: 6px; font-size: 13px; color: var(--text-muted); display: block;">Google Web App URL (API Key)</label>
-                    <div style="display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap;">
-                        <input type="password" id="setSheetUrl" placeholder="https://script.google.com/macros/s/..." style="flex: 1; min-width: 200px; margin: 0;">
-                        <button type="button" class="btn-icon-action" id="pushCloudBtn" title="Force Push to Cloud" style="flex: 1; min-width: 40px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg></button>
-                        <button type="button" class="btn-icon-action" id="pullCloudBtn" title="Force Pull from Cloud" style="flex: 1; min-width: 40px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Securely sync your journal across devices using Google.</p>
+                    
+                    <!-- Auth Container -->
+                    <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 6px; padding: 16px; display: flex; align-items: center; justify-content: space-between;">
+                        
+                        <!-- Logged Out State -->
+                        <div id="loggedOutState" style="width: 100%; display: flex; justify-content: center;">
+                            <button type="button" class="btn btn-primary" id="loginBtn" style="width: 100%; height: 40px; justify-content: center; font-weight: 600;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                Sign in with Google
+                            </button>
+                        </div>
+
+                        <!-- Logged In State -->
+                        <div id="loggedInState" style="width: 100%; display: none; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <img id="userAvatar" src="" style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--accent-neon); object-fit: cover;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <span id="userName" style="font-size: 14px; font-weight: 600; color: var(--text-main);">User Name</span>
+                                    <span style="font-size: 11px; color: var(--profit-green);">Connected</span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-text" id="logoutBtn" style="color: var(--loss-red); font-size: 13px; border: 1px solid rgba(242, 54, 69, 0.2); padding: 6px 12px; border-radius: 4px; background: rgba(242, 54, 69, 0.05);">Sign Out</button>
+                        </div>
+
                     </div>
                 </div>
                 
                 <div style="margin-bottom: 32px;">
-                    <div class="section-title">DATA MANAGEMENT</div>
+                    <div class="section-title">LOCAL BACKUP</div>
                     <div style="display: flex; gap: 16px; flex-wrap: wrap;">
                         <button type="button" class="btn-text" id="exportBtnModal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg> Export JSON</button>
                         <button type="button" class="btn-text" id="importBtnModal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="12" x2="12" y2="18"></line><polyline points="9 15 12 12 15 15"></polyline></svg> Import JSON</button>
@@ -987,7 +1008,30 @@
         </div>
     </div>
 
-    <script>
+    <!-- MAIN MODULE SCRIPT INCORPORATING FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAUOkoJNEzc1fzAV4Uul_uYpxf9a_gLDPY",
+            authDomain: "the-trading-vault.firebaseapp.com",
+            projectId: "the-trading-vault",
+            storageBucket: "the-trading-vault.firebasestorage.app",
+            messagingSenderId: "398304930833",
+            appId: "1:398304930833:web:c000cfe4cca7d3de7d55b0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        let currentUser = null;
+        let unsubscribeTrades = null;
+
         const placeholderImg = 'https://via.placeholder.com/800x400/131722/787b86?text=No+Chart+Provided';
         
         let trades =[];
@@ -1011,8 +1055,7 @@
             brokerage: 20, 
             stt: 0.025, 
             exch: 0.00297, 
-            gst: 18, 
-            sheetUrl: 'https://script.google.com/macros/s/AKfycbzj87ghBNRm6Lw48s56VODph8n9D0XJ6UOxOe6I_KeLsEZlZ84S1MxXHccI9culiWw/exec' 
+            gst: 18 
         };
         let feeSettings = JSON.parse(localStorage.getItem('pravinFeeSettings')) || defaultSettings;
 
@@ -1056,6 +1099,135 @@
         let allTags =[...new Set([...defaultTags, ...customTags])];
         let activeTags =[];
 
+        // FIREBASE AUTH & SYNC LOGIC
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch(err => console.error("Login failed:", err));
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if(confirm("Are you sure you want to sign out? Local data will stop syncing.")) signOut(auth);
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('loggedOutState').style.display = 'none';
+                document.getElementById('loggedInState').style.display = 'flex';
+                document.getElementById('userAvatar').src = user.photoURL || 'https://via.placeholder.com/36';
+                document.getElementById('userName').textContent = user.displayName || 'Trader';
+                
+                setupFirebaseListener();
+                loadSettingsFromFirebase();
+            } else {
+                currentUser = null;
+                document.getElementById('loggedOutState').style.display = 'flex';
+                document.getElementById('loggedInState').style.display = 'none';
+                
+                if (unsubscribeTrades) { unsubscribeTrades(); unsubscribeTrades = null; }
+                updateSyncStatusUI('unsynced');
+            }
+        });
+
+        function setupFirebaseListener() {
+            if (!currentUser) return;
+            updateSyncStatusUI('syncing');
+            const q = collection(db, "users", currentUser.uid, "trades");
+            unsubscribeTrades = onSnapshot(q, (snapshot) => {
+                let cloudTrades =[];
+                snapshot.forEach(doc => cloudTrades.push(doc.data()));
+                trades = cloudTrades;
+                saveData();
+                renderUI();
+                updateSyncStatusUI('synced');
+            }, (error) => {
+                console.error("Firestore sync error:", error);
+                updateSyncStatusUI('error');
+            });
+        }
+
+        async function saveSettingsToFirebase() {
+            if (!currentUser) return;
+            try {
+                const docRef = doc(db, "users", currentUser.uid, "settings", "preferences");
+                await setDoc(docRef, { feeSettings, customTags });
+            } catch(e) { console.error("Settings sync error", e); }
+        }
+
+        async function loadSettingsFromFirebase() {
+            if (!currentUser) return;
+            try {
+                const docRef = doc(db, "users", currentUser.uid, "settings", "preferences");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.feeSettings) { feeSettings = data.feeSettings; localStorage.setItem('pravinFeeSettings', JSON.stringify(feeSettings)); }
+                    if (data.customTags) {
+                        customTags = data.customTags;
+                        localStorage.setItem('pravinCustomTags', JSON.stringify(customTags));
+                        allTags = [...new Set([...defaultTags, ...customTags])];
+                        renderTagSelector();
+                    }
+                }
+            } catch(e) { console.error("Settings load error", e); }
+        }
+
+        // IMGBB UPLOADER
+        async function processAndUploadImage(base64Data) {
+            if (!base64Data || !base64Data.startsWith('data:image')) return base64Data; 
+            updateSyncStatusUI('syncing');
+            try {
+                const IMGBB_API_KEY = "2d091a446991f199e3e8ba621fe1ab49"; 
+                const base64Clean = base64Data.split(',')[1];
+                const formData = new FormData();
+                formData.append("image", base64Clean);
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    return data.data.url; 
+                } else {
+                    throw new Error("ImgBB upload failed");
+                }
+            } catch(e) {
+                console.error("Image Upload Error:", e);
+                return base64Data;
+            }
+        }
+
+        async function syncToFirebase(tradeData, action) {
+            if (!currentUser) return; 
+            updateSyncStatusUI('syncing');
+            try {
+                const docRef = doc(db, "users", currentUser.uid, "trades", tradeData.id.toString());
+                if (action === 'delete') await deleteDoc(docRef);
+                else await setDoc(docRef, tradeData);
+            } catch(e) {
+                console.error("Firebase write error:", e);
+                updateSyncStatusUI('error');
+            }
+        }
+
+        function updateSyncStatusUI(status) {
+            const statusEl = document.getElementById('syncStatus');
+            if (!statusEl) return;
+            if (!currentUser) {
+                statusEl.innerHTML = `<div style="width:8px;height:8px;border-radius:50%;background:#787b86;box-shadow:0 0 6px #787b86;"></div> Local Only`;
+                statusEl.style.color = "#787b86"; return;
+            }
+            if (status === 'syncing') {
+                statusEl.innerHTML = `<div style="width:8px;height:8px;border-radius:50%;background:#eeb422;box-shadow:0 0 6px #eeb422;"></div> Syncing...`;
+                statusEl.style.color = "#eeb422";
+            } else if (status === 'synced') {
+                statusEl.innerHTML = `<div style="width:8px;height:8px;border-radius:50%;background:#089981;box-shadow:0 0 6px #089981;"></div> Cloud Synced`;
+                statusEl.style.color = "#089981";
+            } else {
+                statusEl.innerHTML = `<div style="width:8px;height:8px;border-radius:50%;background:#f23645;box-shadow:0 0 6px #f23645;"></div> Sync Error`;
+                statusEl.style.color = "#f23645";
+            }
+        }
+
         function renderTagSelector() {
             const container = document.getElementById('tradeTags');
             if(!container) return;
@@ -1091,6 +1263,7 @@
                             activeTags = activeTags.filter(at => at !== t);
                             localStorage.setItem('pravinCustomTags', JSON.stringify(customTags));
                             allTags =[...new Set([...defaultTags, ...customTags])];
+                            saveSettingsToFirebase();
                             renderTagSelector();
                         }
                     });
@@ -1110,6 +1283,7 @@
                     customTags.push(newTag.trim());
                     localStorage.setItem('pravinCustomTags', JSON.stringify(customTags));
                     allTags = [...new Set([...defaultTags, ...customTags])];
+                    saveSettingsToFirebase();
                     renderTagSelector();
                 }
             };
@@ -1135,6 +1309,7 @@
             setupFilterBar();
             renderTagSelector();
             setupKeyboardShortcuts();
+            updateSyncStatusUI('unsynced');
             
             // Initialize Mobile Analytics Toggle logic
             const mobAnalyticsBtn = document.getElementById('mobileAnalyticsBtn');
@@ -1146,46 +1321,43 @@
                 });
             }
 
-// PWA Installation Logic - Popup
-let deferredPrompt;
-const installPopup = document.getElementById('installPopup');
-const popupInstallBtn = document.getElementById('popupInstallBtn');
-const popupCloseBtn = document.getElementById('popupCloseBtn');
+            // PWA Installation Logic - Popup
+            let deferredPrompt;
+            const installPopup = document.getElementById('installPopup');
+            const popupInstallBtn = document.getElementById('popupInstallBtn');
+            const popupCloseBtn = document.getElementById('popupCloseBtn');
 
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    
-    // Show the popup organically after a 2-second delay
-    setTimeout(() => {
-        if(installPopup) {
-            installPopup.style.display = 'block';
-            setTimeout(() => installPopup.classList.add('show'), 50);
-        }
-    }, 2000);
-});
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                setTimeout(() => {
+                    if(installPopup) {
+                        installPopup.style.display = 'block';
+                        setTimeout(() => installPopup.classList.add('show'), 50);
+                    }
+                }, 2000);
+            });
 
-if(popupInstallBtn) {
-    popupInstallBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            deferredPrompt = null;
-            // Hide popup
-            installPopup.classList.remove('show');
-            setTimeout(() => installPopup.style.display = 'none', 500);
-        }
-    });
-}
+            if(popupInstallBtn) {
+                popupInstallBtn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        deferredPrompt = null;
+                        installPopup.classList.remove('show');
+                        setTimeout(() => installPopup.style.display = 'none', 500);
+                    }
+                });
+            }
 
-if(popupCloseBtn) {
-    popupCloseBtn.addEventListener('click', () => {
-        installPopup.classList.remove('show');
-        setTimeout(() => installPopup.style.display = 'none', 500);
-    });
-}
+            if(popupCloseBtn) {
+                popupCloseBtn.addEventListener('click', () => {
+                    installPopup.classList.remove('show');
+                    setTimeout(() => installPopup.style.display = 'none', 500);
+                });
+            }
 
-            // Register Basic Service Worker (Needed for PWA validation)
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('./sw.js').catch(err => {
@@ -1194,12 +1366,6 @@ if(popupCloseBtn) {
                 });
             }
 
-            if (feeSettings.sheetUrl && feeSettings.sheetUrl.trim() !== '') {
-                pullFromGoogleSheetsSilent();
-            } else {
-                updateSyncStatusUI('unsynced');
-            }
-            
             const logTypeInput = document.getElementById('tradeLogType');
             if (logTypeInput) logTypeInput.addEventListener('change', toggleExecutionFields);
             toggleExecutionFields();
@@ -1917,133 +2083,11 @@ if(popupCloseBtn) {
             checkUrlTick(`tradeImage${index}Url`); 
         };
 
-        function updateSyncStatusUI(status) {
-            const statusEl = document.getElementById('syncStatus');
-            if (!feeSettings.sheetUrl || feeSettings.sheetUrl.trim() === '') {
-                statusEl.innerHTML = `<div style="width:8px;height:8px;border-radius:50%;background:#f23645;box-shadow:0 0 6px #f23645;"></div> Unsynced`;
-                statusEl.style.color = "#f23645";
-                return;
-            }
-            if (status === 'syncing') {
-                statusEl.innerHTML = `<div style="width:8px;height:8px;border-radius:50%;background:#eeb422;box-shadow:0 0 6px #eeb422;"></div> Syncing...`;
-                statusEl.style.color = "#eeb422";
-            } else if (status === 'synced') {
-                statusEl.innerHTML = `<div style="width:8px;height:8px;border-radius:50%;background:#089981;box-shadow:0 0 6px #089981;"></div> Synced`;
-                statusEl.style.color = "#089981";
-            } else {
-                statusEl.innerHTML = `<div style="width:8px;height:8px;border-radius:50%;background:#f23645;box-shadow:0 0 6px #f23645;"></div> Sync Error`;
-                statusEl.style.color = "#f23645";
-            }
-        }
-
-        async function syncToGoogleSheets(dataObj, action) {
-            if (!feeSettings.sheetUrl) return; 
-            updateSyncStatusUI('syncing'); 
-            try {
-                let payload;
-                if (action === 'delete') {
-                    payload = { action: 'delete', id: dataObj.id };
-                } else {
-                    let safeData = JSON.parse(JSON.stringify(dataObj));
-                    if (safeData.image1 && safeData.image1.startsWith('data:image')) delete safeData.image1;
-                    if (safeData.image2 && safeData.image2.startsWith('data:image')) delete safeData.image2;
-                    payload = { action: 'save', data: safeData };
-                }
-                let res = await fetch(feeSettings.sheetUrl, { method: 'POST', body: JSON.stringify(payload), redirect: 'follow' });
-                if (res.ok) updateSyncStatusUI('synced');
-                else updateSyncStatusUI('error');
-            } catch(e) {
-                console.error("Cloud sync failed", e);
-                updateSyncStatusUI('error');
-            }
-        }
-
-        function mergeCloudDataWithLocal(cloudData, localData) {
-            return cloudData.map(cTrade => {
-                if (cTrade.date && (String(cTrade.date).includes('T') || String(cTrade.date).endsWith('Z'))) {
-                    let str = String(cTrade.date);
-                    if (!str.endsWith('Z') && str.includes('T')) str += 'Z'; 
-                    let d = new Date(str);
-                    if (!isNaN(d.getTime())) {
-                        let y = d.getFullYear();
-                        let mo = String(d.getMonth() + 1).padStart(2, '0');
-                        let da = String(d.getDate()).padStart(2, '0');
-                        let ho = String(d.getHours()).padStart(2, '0');
-                        let mi = String(d.getMinutes()).padStart(2, '0');
-                        cTrade.date = `${y}-${mo}-${da} ${ho}:${mi}`;
-                    }
-                }
-
-                let lTrade = localData.find(t => t.id === cTrade.id);
-                if (lTrade) {
-                    if (!cTrade.image1 && lTrade.image1 && lTrade.image1.startsWith('data:image')) cTrade.image1 = lTrade.image1;
-                    if (!cTrade.image2 && lTrade.image2 && lTrade.image2.startsWith('data:image')) cTrade.image2 = lTrade.image2;
-                }
-                if (cTrade.regime === undefined) cTrade.regime = 'N/A';
-                return cTrade;
-            });
-        }
-
-        async function pullFromGoogleSheetsSilent() {
-            updateSyncStatusUI('syncing');
-            try {
-                let res = await fetch(feeSettings.sheetUrl + "?action=get", { redirect: 'follow' });
-                if (!res.ok) throw new Error("GET failed");
-                let data = await res.json();
-                if (Array.isArray(data)) {
-                    trades = mergeCloudDataWithLocal(data, trades);
-                    saveData(); renderUI(); updateSyncStatusUI('synced');
-                } else updateSyncStatusUI('error');
-            } catch (err) {
-                updateSyncStatusUI('error');
-            }
-        }
-
-        document.getElementById('pullCloudBtn').addEventListener('click', async () => {
-            if (!feeSettings.sheetUrl) return alert("Please set your Google Web App URL first.");
-            updateSyncStatusUI('syncing');
-            try {
-                let res = await fetch(feeSettings.sheetUrl + "?action=get", { redirect: 'follow' });
-                if (!res.ok) throw new Error("HTTP " + res.status);
-                let data = await res.json();
-                if (Array.isArray(data)) {
-                    trades = mergeCloudDataWithLocal(data, trades);
-                    saveData(); renderUI(); updateSyncStatusUI('synced');
-                    alert("Data fully synchronized from Cloud!");
-                } else throw new Error("Invalid data format received.");
-            } catch (err) {
-                updateSyncStatusUI('error');
-                alert(`Sync Failed: ${err.message}`);
-            }
-        });
-
-        document.getElementById('pushCloudBtn').addEventListener('click', async () => {
-            if (!feeSettings.sheetUrl) return alert("Please set your Google Web App URL first.");
-            updateSyncStatusUI('syncing');
-            try {
-                const cleanTrades = trades.map(t => {
-                    let safe = { ...t };
-                    if (safe.image1 && safe.image1.startsWith('data:image')) safe.image1 = "";
-                    if (safe.image2 && safe.image2.startsWith('data:image')) safe.image2 = "";
-                    return safe;
-                });
-                let res = await fetch(feeSettings.sheetUrl, { method: 'POST', body: JSON.stringify({ action: 'saveAll', data: cleanTrades }), redirect: 'follow' });
-                if (res.ok) {
-                    alert("All local data successfully pushed to Cloud!");
-                    updateSyncStatusUI('synced');
-                } else throw new Error("Failed to push.");
-            } catch (err) {
-                updateSyncStatusUI('error');
-                alert(`Push Failed: ${err.message}`);
-            }
-        });
-
         document.getElementById('settingsBtn').addEventListener('click', () => {
             document.getElementById('setBrokerage').value = feeSettings.brokerage;
             document.getElementById('setSTT').value = feeSettings.stt;
             document.getElementById('setExch').value = feeSettings.exch;
             document.getElementById('setGST').value = feeSettings.gst;
-            document.getElementById('setSheetUrl').value = feeSettings.sheetUrl || '';
             document.getElementById('settingsModalOverlay').style.display = 'flex';
         });
         
@@ -2057,15 +2101,14 @@ if(popupCloseBtn) {
                 brokerage: parseFloat(document.getElementById('setBrokerage').value) || 0,
                 stt: parseFloat(document.getElementById('setSTT').value) || 0,
                 exch: parseFloat(document.getElementById('setExch').value) || 0,
-                gst: parseFloat(document.getElementById('setGST').value) || 0,
-                sheetUrl: document.getElementById('setSheetUrl').value.trim()
+                gst: parseFloat(document.getElementById('setGST').value) || 0
             };
             localStorage.setItem('pravinFeeSettings', JSON.stringify(feeSettings));
+            saveSettingsToFirebase();
             document.getElementById('settingsModalOverlay').style.display = 'none';
-            if (feeSettings.sheetUrl) pullFromGoogleSheetsSilent();
         });
 
-        document.getElementById('tradeForm').addEventListener('submit', (e) => {
+        document.getElementById('tradeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const logType = document.getElementById('tradeLogType').value;
@@ -2100,8 +2143,22 @@ if(popupCloseBtn) {
             let finalImg1 = document.getElementById('tradeImage1Url').value === '[Pasted Image]' ? pastedImages[1] : document.getElementById('tradeImage1Url').value.trim();
             let finalImg2 = document.getElementById('tradeImage2Url').value === '[Pasted Image]' ? pastedImages[2] : document.getElementById('tradeImage2Url').value.trim();
 
+            const targetId = editingTradeId || Date.now();
+            const saveBtn = document.getElementById('saveBtn'); 
+            const origText = saveBtn.innerHTML;
+            saveBtn.innerHTML = 'Uploading & Saving...'; 
+            saveBtn.disabled = true;
+
+            try {
+                if (currentUser && finalImg1.startsWith('data:image')) finalImg1 = await processAndUploadImage(finalImg1);
+                if (currentUser && finalImg2.startsWith('data:image')) finalImg2 = await processAndUploadImage(finalImg2);
+            } catch(err) { 
+                console.error(err); 
+                alert("Image upload failed. Saving locally."); 
+            }
+
             const tradeData = {
-                id: editingTradeId || Date.now(),
+                id: targetId,
                 date: document.getElementById('tradeDate').value, asset: document.getElementById('tradeAsset').value.toUpperCase(),
                 setup: setup, regime: regime, isSetupOnly: isSetup, isMissed: isMissed,
                 direction: isSetup ? '' : dir, qty: isSetup ? '' : rawQty, entry: isSetup ? '' : rawEntry, sl: isSetup ? '' : rawSl, exit: isSetup ? '' : rawExit, 
@@ -2116,7 +2173,11 @@ if(popupCloseBtn) {
                 trades.push(tradeData); 
             }
 
-            syncToGoogleSheets(tradeData, 'save');
+            await syncToFirebase(tradeData, 'save');
+            saveData();
+
+            saveBtn.innerHTML = origText; 
+            saveBtn.disabled = false;
             document.getElementById('modalOverlay').style.display = 'none'; 
             document.getElementById('tradeForm').reset();
             resetTags();
@@ -2166,14 +2227,15 @@ if(popupCloseBtn) {
             
             toggleExecutionFields(); 
             document.getElementById('modalTitle').textContent = 'Edit Log'; 
-            document.getElementById('saveBtn').textContent = 'Update Journal'; 
+            document.getElementById('saveBtn').innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Update Journal'; 
             document.getElementById('modalOverlay').style.display = 'flex';
         };
 
         window.deleteTrade = (id) => { 
             if(confirm("Permanently delete this log?")) { 
                 trades = trades.filter(t => t.id !== id); 
-                syncToGoogleSheets({ id: id }, 'delete');
+                syncToFirebase({ id: id }, 'delete');
+                saveData();
                 renderUI(); 
             } 
         };
@@ -2205,13 +2267,28 @@ if(popupCloseBtn) {
             const file = e.target.files[0]; 
             if (!file) return; 
             const reader = new FileReader(); 
-            reader.onload = (ev) => { 
+            reader.onload = async (ev) => { 
                 try { 
                     const data = JSON.parse(ev.target.result); 
-                    if (Array.isArray(data) && confirm("Overwrite current journal data?")) { 
+                    if (Array.isArray(data) && confirm("Overwrite current journal data? If logged in, this will also sync to your cloud.")) { 
                         trades = data; 
+                        saveData(); 
                         renderUI(); 
-                        alert('Restored!'); 
+                        
+                        // Push all to Firebase if logged in
+                        if (currentUser) {
+                            const importBtn = document.getElementById('importBtnModal');
+                            const originalText = importBtn.innerHTML;
+                            importBtn.innerHTML = 'Syncing to Cloud...';
+                            
+                            for (const trade of trades) {
+                                await syncToFirebase(trade, 'save');
+                            }
+                            importBtn.innerHTML = originalText;
+                        }
+                        
+                        alert('Backup Restored & Synced Successfully!'); 
+                        document.getElementById('settingsModalOverlay').style.display = 'none';
                     } 
                 } catch (err) { 
                     alert('Invalid backup file.'); 
@@ -2297,7 +2374,7 @@ if(popupCloseBtn) {
             }
 
             document.getElementById('modalTitle').textContent = 'Log Trade / Setup'; 
-            document.getElementById('saveBtn').textContent = 'Save to Journal'; 
+            document.getElementById('saveBtn').innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Save to Journal'; 
             document.getElementById('modalOverlay').style.display = 'flex'; 
         });
 
@@ -2537,27 +2614,8 @@ if(popupCloseBtn) {
                 console.error("Failed to setup shortcuts:", outerErr);
             }
         }
+        
         init();
     </script>
-<!-- Custom Install Prompt -->
-<div id="installPopup" class="install-popup" style="display: none;">
-    <div class="install-popup-content">
-        <svg viewBox="0 0 100 100" class="vault-logo" style="width: 32px; height: 32px;" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50 5 L88.97 27.5 L88.97 72.5 L50 95 L11.03 72.5 L11.03 27.5 Z" class="vault-hexagon" />
-            <circle cx="50" cy="50" r="26" class="vault-ring-dashed" />
-            <circle cx="50" cy="50" r="18" class="vault-ring-solid" />
-            <path d="M32 62 L45 50 L52 56 L66 40" class="trading-trend" />
-            <path d="M56 40 L66 40 L66 50" class="trading-trend" />
-        </svg>
-        <div class="install-text">
-            <strong>Install Trading Vault</strong>
-            <span>Get the full-screen desktop experience.</span>
-        </div>
-        <div class="install-actions">
-            <button id="popupInstallBtn" class="btn btn-primary" style="height: 30px; font-size: 12px;">Install</button>
-            <button id="popupCloseBtn" class="btn-text" style="font-size: 20px; padding: 0 8px;">&times;</button>
-        </div>
-    </div>
-</div>
 </body>
 </html>
