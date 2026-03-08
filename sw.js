@@ -1,9 +1,10 @@
-const CACHE_NAME = 'trading-vault-v3'; // Changed to v3!
+const CACHE_NAME = 'trading-vault-v4';
 const ASSETS =[
   './',
   './index.html',
   './manifest.json',
-  './icon.svg',  // Changed to SVG
+  './icon-192.png',
+  './icon-512.png',
   'https://cdn.jsdelivr.net/npm/chart.js',
   'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
   'https://cdn.jsdelivr.net/npm/flatpickr'
