@@ -1,4 +1,4 @@
-const CACHE_NAME = 'trading-vault-v5'; // Bumped to v5
+const CACHE_NAME = 'trading-vault-v6'; // Bumped to v6
 const ASSETS =[
   './',
   './index.html',
